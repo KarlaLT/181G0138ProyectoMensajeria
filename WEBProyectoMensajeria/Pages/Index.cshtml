@@ -1,0 +1,47 @@
+﻿@page
+@model WEBProyectoMensajeria.Pages.IndexModel
+@{
+}
+<html>
+<head>
+    <title>Iniciar sesión</title>
+    <link href="~/estiloss.css" rel="stylesheet" />
+        <link href="~/manifest.json" rel="manifest" />
+        <link href="~/img/icons/favicon.ico" rel="icon" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+
+<body class="bodyLogin">
+    <header>
+        <h1>Iniciar sesión</h1>
+    </header>
+
+    <main>
+
+        <div class="login">
+            <input class="btnUser" type="text" placeholder="Correo" required />
+
+            <input class="btnPassword" type="password" placeholder="Contraseña" required />
+
+            <a class="btnEntrar" href="/Student">Entrar</a>
+        </div>
+    </main>
+
+    <footer>
+        <div>
+            <img src="~/img/logoBlanco_WEB.jpg" />
+            <h5>TECNM Región Carbonífera</h5>
+        </div>
+    </footer>
+
+
+    <script>
+      if (navigator.serviceWorker) {
+
+            //window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/serviceworker.js');
+            //});
+        }
+</script>
+</body>
+</html>

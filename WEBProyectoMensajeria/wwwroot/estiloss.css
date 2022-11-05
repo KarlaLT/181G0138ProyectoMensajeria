@@ -1,0 +1,433 @@
+﻿
+html {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    padding: 0;
+    margin: 0;
+    /* background-color: #00a86b;*/
+}
+
+.bodyLogin {
+    background-image: url(../img/fd.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: left bottom;
+}
+
+:root {
+    --primary-color: #085c54;
+}
+
+/*LOGIN*/
+.bodyLogin header h1 {
+    text-align: center;
+    padding: 50px;
+    color: white;
+    margin-top: 30px;
+    font-size: 2em;
+}
+
+main .login {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.btnUser, .btnPassword, .btnEntrar {
+    width: 40vw;
+    border-width: 0;
+    box-shadow: 0 1px 0 1px rgba(45, 44, 44, 0.32);
+    background-color: white;
+    background-image: url(../img/user.png);
+    background-repeat: no-repeat;
+    background-position: left;
+    background-size: contain;
+    background-origin: content-box;
+    text-align: center;
+    align-self: center;
+    margin-bottom: 1em;
+    padding: 10px 10px;
+    font-size: 1em;
+}
+
+.btnPassword {
+    background-image: url(../img/pass.png);
+}
+
+.btnEntrar {
+    background-image: none;
+    margin-top: 1.5em;
+    width: 20vw;
+    color: var(--primary-color);
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+footer div img {
+    height: 5vh;
+    align-self: center;
+    margin: 10px;
+}
+
+footer div h5 {
+    color: gray;
+    font-weight: 300;
+    font-size: 1em;
+    align-self: center;
+}
+
+footer div {
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+.options {
+    display: none;
+    position: absolute;
+    right: 25px;
+    top: 40px;
+    border-radius: 0px 0px 4px 4px;
+    background-color: var(--primary-color);
+    list-style: none;
+    padding: 10px;
+    line-height: 40px;
+}
+
+    .options li {
+        margin: 0;
+        padding: 0;
+    }
+
+    .options a {
+        margin: 0;
+        padding: 10px 20px;
+        color: #ffffff;
+        text-decoration: none;
+        text-align: center;
+    }
+
+        .options a:hover {
+            border-radius: 5px;
+            background-color: #3CB371;
+            cursor: pointer;
+        }
+
+
+
+/*INICIO*/
+.bodyInicio {
+    padding: 0;
+    margin: 0;
+}
+
+    .bodyInicio header {
+        background-color: var(--primary-color);
+        height: 10%;
+        padding-left: 3%;
+        color: white;
+        text-align: left;
+        font-size: .8em;
+        padding-top: 5px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .bodyInicio img {
+        height: 40px;
+        align-self: center;
+        margin: 20px;
+        cursor: pointer;
+    }
+
+    .bodyInicio main {
+        background-color: white;
+    }
+
+.navMessages {
+    color: gray;
+    display: flex;
+    flex-direction: column;
+}
+
+    .navMessages p:first-child {
+        margin-left: 40px;
+    }
+
+    .navMessages div {
+        display: flex;
+        flex-direction: row;
+        margin: auto;
+    }
+
+        .navMessages div a {
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 30vw;
+            margin-left: 10px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+            .navMessages div a:first-child {
+                border-bottom-left-radius: 100px;
+                border-top-left-radius: 100px;
+            }
+
+            .navMessages div a:last-child {
+                border-bottom-right-radius: 100px;
+                border-top-right-radius: 100px;
+            }
+
+        .navMessages div select {
+            width: 10vw;
+            margin-left: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-bottom: 1px solid;
+            border-color: gray;
+            outline: 0;
+            box-shadow: none;
+            text-align: center;
+            color: gray;
+        }
+
+
+.messages div {
+    background-color: #D3D3D3;
+    margin: 10px 20px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    color: #696969;
+    display: flex;
+    flex-direction: column;
+}
+
+    .messages div label:last-child {
+        text-align: right;
+        align-self: end;
+        font-size: .8em;
+    }
+
+/*ADMINISTRATIVE*/
+.btn-flotante {
+    font-size: 2.8em; /* Cambiar el tamaño de la tipografia */
+    font-weight: bold; /* Fuente en negrita o bold */
+    color: #ffffff; /* Color del texto */
+    border-radius: 100%; /* Borde del boton */
+    letter-spacing: 2px; /* Espacio entre letras */
+    background-color: var(--primary-color); /* Color de fondo */
+    /*padding: 18px 30px;*/ /* Relleno del boton */
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    transition: all 300ms ease 0ms;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+    z-index: 99;
+    text-decoration: none;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+}
+
+    .btn-flotante:hover {
+        background-color: #3CB371; /* Color de fondo al pasar el cursor */
+        box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.3);
+        transform: translateY(-7px);
+    }
+
+/*    MODAL AGREGAR
+*/
+
+.modal {
+    background: rgba(0, 0, 0, 0.8);
+    color: #48785E;
+    position: fixed;
+    top: -100vh;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    transition: all .5s;
+    z-index: 100;
+}
+
+    .modal form {
+        width: 40%;
+        height: 50%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
+        font-size: 1.5em;
+        background-color: white;
+        padding: 0 30px;
+        display: flex;
+        flex-direction: column;
+        border-radius: 15px;
+    }
+
+        .modal form label, .modal form p {
+            font-size: .8em;
+            font-weight: 600;
+        }
+
+        .modal form p {
+            font-weight: normal;
+        }
+
+        .modal form h4 {
+            text-align: center;
+            margin: 30px 10px;
+        }
+
+        .modal form select {
+            width: 10vw;
+            margin-left: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-bottom: 1px solid;
+            border-color: gray;
+            outline: 0;
+            box-shadow: none;
+            text-align: center;
+        }
+
+        .modal form textarea {
+            margin: 10px 0;
+            height: 30%;
+            resize: none;
+            padding: 10px;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        .modal form div:last-child {
+            align-self: end;
+        }
+
+        .modal form a, .modal form input[type="submit"] {
+            text-decoration: none;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 25px;
+            font-size: .7em;
+            border: none;
+            cursor: pointer;
+            align-self: baseline;
+            border-radius: 3px;
+        }
+
+        .modal form input[type="submit"] {
+            border: 1px solid var(--primary-color);
+        }
+
+/*    sent
+*/
+.messages div div {
+    display: grid;
+    flex-direction: row;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    grid-template-columns: 92% 8%
+}
+
+.messages img {
+    height: 18px;
+}
+
+.messages .crud {
+    height: 15px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+/*RESPONSIVE*/
+@media screen and (max-width: 560px) and (max-height:940px) {
+    header h1 {
+        font-size: 1.8em;
+        padding: 0;
+        padding-top: 20px;
+        margin-bottom: 50px;
+    }
+
+    .btnUser, .btnPassword {
+        width: 75vw;
+    }
+
+    .btnEntrar {
+        width: 40vw;
+    }
+
+
+    .bodyInicio header {
+        height: 8%;
+        padding-top: 0px;
+    }
+
+        .bodyInicio header h1 {
+            margin-top: 0;
+        }
+
+        .bodyInicio header img {
+            height: 30px;
+        }
+
+    .navMessages div a {
+        width: 20vw;
+    }
+
+    .navMessages div:last-child {
+        margin-left: 10px;
+    }
+
+        .navMessages div:last-child select {
+            width: 30vw;
+        }
+
+    .navMessages div a:first-child {
+        margin-left: 0;
+    }
+
+    .messages div {
+        margin: 0 30px 10px 30px;
+    }
+
+    .modal form {
+        width: 60%;
+        height: 40%;
+    }
+
+        .modal form h4 {
+            font-size: .8em;
+        }
+
+        .modal form label, .modal form select {
+            font-size: .6em;
+        }
+
+        .modal form select {
+            width: 50%;
+        }
+
+        .modal form a, .modal form input[type="submit"] {
+            padding: 3px 20px;
+            font-size: .6em;
+        }
+
+    .messages div div {
+        grid-template-columns: 70% 5%
+    }
+}

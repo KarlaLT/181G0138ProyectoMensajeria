@@ -1,0 +1,150 @@
+﻿@page
+@model WEBProyectoMensajeria.Pages.StudentModel
+@{
+}
+
+
+<html>
+<head>
+    <title>Bienvenido alumno</title>
+    <link href="~/estiloss.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+
+<body class="bodyInicio">
+    <header>
+        <h1>¡Bienvenido (a), Karla!</h1>
+        <div>
+             <img src="~/img/Imagen1.png" />
+         <nav>
+            <ul class="options">
+                <li><a href="/Index">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="navMessages">
+            <p>Revisa tus nuevos mensajes</p>
+
+            <div>
+                <a href="#">Hoy</a>
+                <a href="#">Ayer</a>
+                <a href="#">Todos</a>
+            </div>
+
+
+            <div>
+                <p>Grupo:</p>
+                <select>
+                    <option>9.1G</option>
+                    <option>7.2G</option>
+                </select>
+            </div>
+        </div>
+
+
+        <section class="messages">
+            <div>
+                <label>De: Dirección académica</label>
+                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
+                <label>28/10/2022 12:55pm</label>
+            </div>
+             <div>
+                <label>De: Dirección académica</label>
+                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
+                <label>28/10/2022 12:55pm</label>
+            </div>
+             <div>
+                <label>De: Dirección académica</label>
+                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
+                <label>28/10/2022 12:55pm</label>
+            </div>
+             <div>
+                <label>De: Dirección académica</label>
+                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
+                <label>28/10/2022 12:55pm</label>
+            </div>
+             <div>
+                <label>De: Dirección académica</label>
+                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
+                <label>28/10/2022 12:55pm</label>
+            </div>
+             <div>
+                <label>De: Dirección académica</label>
+                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
+                <label>28/10/2022 12:55pm</label>
+            </div>
+             <div>
+                <label>De: Dirección académica</label>
+                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
+                <label>28/10/2022 12:55pm</label>
+            </div>
+             <div>
+                <label>De: Dirección académica</label>
+                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
+                <label>28/10/2022 12:55pm</label>
+            </div>
+             <div>
+                <label>De: Dirección académica</label>
+                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
+                <label>28/10/2022 12:55pm</label>
+            </div>
+             <div>
+                <label>De: Dirección académica</label>
+                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
+                <label>28/10/2022 12:55pm</label>
+            </div>
+        </section>
+
+    </main>
+
+      <div class="modal">
+
+            <form>
+                <h4>Detalles del mensaje</h4>
+
+               <div>
+                    <label>Para:</label>
+                    <label>9.2G</label>
+            </div>
+
+            <label>Mensaje:</label>
+
+ <p>Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
+            <div>
+                    <a href="/Student" >X Cerrar</a>
+                </div>
+
+
+
+        </form>
+
+    </div>
+
+
+      <script>
+    var modal = document.querySelector(".modal");
+    var options = document.querySelector("header div img");
+    var menu = document.querySelector(".options");
+    var message = document.querySelector(".messages div");
+
+    options.addEventListener("click", function(){
+        if(menu.style.display!="block"){
+                    menu.style.display="block";
+        }
+                else{
+                    menu.style.display="none";
+        }
+    });
+
+    message.addEventListener("click", function(){
+        modal.style.top=0;
+    });
+
+    </script>
+
+
+</body>
+</html>

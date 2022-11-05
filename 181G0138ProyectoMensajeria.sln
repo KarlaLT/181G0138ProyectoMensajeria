@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32421.90
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIProyectoMensajeria", "APIProyectoMensajeria\APIProyectoMensajeria.csproj", "{34E0A437-8FCC-4941-ACBF-5C730D86F6AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WEBProyectoMensajeria", "WEBProyectoMensajeria\WEBProyectoMensajeria.csproj", "{D5F3F235-2624-49FF-BF9E-FA3A34FF91B8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{34E0A437-8FCC-4941-ACBF-5C730D86F6AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34E0A437-8FCC-4941-ACBF-5C730D86F6AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34E0A437-8FCC-4941-ACBF-5C730D86F6AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34E0A437-8FCC-4941-ACBF-5C730D86F6AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5F3F235-2624-49FF-BF9E-FA3A34FF91B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5F3F235-2624-49FF-BF9E-FA3A34FF91B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5F3F235-2624-49FF-BF9E-FA3A34FF91B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5F3F235-2624-49FF-BF9E-FA3A34FF91B8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F3286801-8EF2-4B88-BFA5-7A9787031180}
+	EndGlobalSection
+EndGlobal
