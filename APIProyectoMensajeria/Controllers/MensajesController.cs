@@ -104,10 +104,64 @@ namespace APIProyectoMensajeria.Controllers
         }
 
         //ENVIAR MENSAJE
+        [HttpPost]
+        public IActionResult Post(Mensaje mssage)
+        {
+            try
+            {
+                //if (idMessage != 0)
+                //{
+                //    var message = reposMensajes.GetById(idMessage);
 
+                //    if (message != null)
+                //    {
+                        return Ok(message);
+                //    }
+                //    else
+                //    {
+                //        return NotFound("No se encontró el mensaje.");
+                //    }
+                //}
+                //else
+                //{
+                //    return BadRequest("Solicitud incorrecta.");
+                //}
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         //EDITAR MENSAJE
+        [HttpPut]
+        public IActionResult Put(Mensaje mssage)
+        {
+            try
+            {
+                //if (idMessage != 0)
+                //{
+                //    var message = reposMensajes.GetById(idMessage);
 
+                //    if (message != null)
+                //    {
+                        return Ok(message);
+                //    }
+                //    else
+                //    {
+                //        return NotFound("No se encontró el mensaje.");
+                //    }
+                //}
+                //else
+                //{
+                //    return BadRequest("Solicitud incorrecta.");
+                //}
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         //ELIMINAR MENSAJE
         [HttpDelete("{idMessage}")]
