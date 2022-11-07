@@ -41,8 +41,8 @@
                                     <label>Para: Dirección académica</label>
 
                     <div class="crud">
-             <img src="~/img/editar.png" />
-             <img src="~/img/basura.png" />
+             <img class="edit" src="~/img/editar.png" />
+             <img class="delete" src="~/img/basura.png" />
                     </div>
                 </div>
 
@@ -89,8 +89,8 @@
                                     <label>Para: Dirección académica</label>
 
                     <div class="crud">
-             <img src="~/img/editar.png" />
-             <img src="~/img/basura.png" />
+             <img  src="~/img/editar.png" />
+             <img  src="~/img/basura.png" />
                     </div>
                 </div>
 
@@ -172,12 +172,58 @@
 
     </div>
 
+     <div class="modal deleteMessage">
+
+            <form>
+                <h4>Confirmar</h4>
+
+          <label>¿Seguro que desea eliminar el mensaje seleccionado?</label>
+
+             <div>
+                 <input type="submit" value="Eliminar" />
+                    <a href="/Administrative" >X Cerrar</a>
+                </div>
+        </form>
+
+    </div>
+
+     <div class="modal updateMessage">
+
+           <form>
+                <h4>Detalles del mensaje</h4>
+
+               <div>
+                    <label>Para:</label>
+                    <select >
+                    <option>9.1G</option>
+                    <option>7.2G</option>
+            </select>
+            </div>
+
+            <label>Mensaje:</label>
+
+            <textarea>Por motivo de graduación, jueves 28 de octubre se suspenden clases en general.. </textarea>
+
+            <div>
+                 <input type="submit" value="Enviar" />
+                    <a href="/Administrative" >X Cerrar</a>
+                </div>
+
+
+
+        </form>
+    </div>
+
+
     <script>
     var modal = document.querySelector(".modal");
     var btnFlotante = document.querySelector(".btn-flotante");
     var options = document.querySelector("header div img");
     var menu = document.querySelector(".options");
         var modalMessage = document.querySelector(".seeMessage");
+        var modalUpdate= document.querySelector(".updateMessage");
+                var modalDelete= document.querySelector(".deleteMessage");
+
 
     btnFlotante.addEventListener("click", function(){
         modal.style.top=0;
@@ -194,9 +240,20 @@
 
      var message = document.querySelector(".messages div");
 
-    message.addEventListener("click", function(){
-        modalMessage.style.top=0;
+    message.addEventListener("click", function(e){
+        if(e.target.className=="edit"){
+            modalUpdate.style.top=0;
+        }
+        else if(e.target.className=="delete"){
+            modalDelete.style.top=0;
+        }
+        else{
+                    modalMessage.style.top=0;
+        }
     });
+
+
+    
     </script>
 
 

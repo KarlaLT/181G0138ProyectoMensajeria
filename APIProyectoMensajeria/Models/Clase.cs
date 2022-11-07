@@ -7,7 +7,7 @@ namespace APIProyectoMensajeria.Models
     {
         public Clase()
         {
-            DatosClases = new HashSet<DatosClase>();
+            UsuariosClases = new HashSet<UsuariosClase>();
         }
 
         public int Id { get; set; }
@@ -15,6 +15,6 @@ namespace APIProyectoMensajeria.Models
         public int? IdGrupo { get; set; }
 
         public virtual Grupo? IdGrupoNavigation { get; set; }
-        public virtual ICollection<DatosClase> DatosClases { get; set; }
+        public virtual ICollection<UsuariosClase> UsuariosClases { get; set; }
     }
 }

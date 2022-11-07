@@ -20,7 +20,7 @@ namespace APIProyectoMensajeria.Controllers
             {
                 if (idRemitente != 0)
                 {
-                    var messages = reposMensajes.GetAll().Where(x=>x.IdRemitente==idRemitente);
+                    var messages = reposMensajes.GetAll().Where(x => x.IdRemitente == idRemitente);
 
                     if (messages != null)
                     {
@@ -36,7 +36,7 @@ namespace APIProyectoMensajeria.Controllers
                     return BadRequest("Solicitud incorrecta.");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -103,29 +103,106 @@ namespace APIProyectoMensajeria.Controllers
             }
         }
 
-        //ENVIAR MENSAJE
+        //ENVIAR MENSAJE A 1 USUARIO
         [HttpPost]
-        public IActionResult Post(Mensaje mssage)
+        public IActionResult Post(Mensaje message)
         {
             try
             {
-                //if (idMessage != 0)
-                //{
-                //    var message = reposMensajes.GetById(idMessage);
+                if (message != null)
+                {
+                    //VERIFICAR QUE SEA DOCENTE O ADMINISTRATIVO
+                    var emisor = Context.Set<Usuario>().Where(x => x.Id == message.IdEmisor).FirstOrDefault();
 
-                //    if (message != null)
-                //    {
-                        return Ok(message);
-                //    }
-                //    else
-                //    {
-                //        return NotFound("No se encontró el mensaje.");
-                //    }
-                //}
-                //else
-                //{
-                //    return BadRequest("Solicitud incorrecta.");
-                //}
+                    if (emisor.Rol != "Estudiante")
+                    {
+                        if (string.IsNullOrWhiteSpace(message.Mensaje1))
+                        {
+                            ModelState.AddModelError("", "Ingrese el mensaje que quiere enviar.");
+                        }
+                        if (message.IdRemitente <= 0)
+                        {
+                            ModelState.AddModelError("", "Selecione destinatarios válidos.");
+                        }
+
+                        if (ModelState.IsValid)
+                        {
+                            message.Fecha = DateTime.Now;
+                            reposMensajes.Insert(message);
+                            return Ok();
+                        }
+                        else
+                        {
+                            return BadRequest(ModelState);
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest("Sólo usuarios de tipo administrativo y docentes pueden enviar mensajes.");
+                    }
+                }
+                else
+                {
+                    return BadRequest("No se puede enviar un mensaje sin datos.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        //ENVIAR MENSAJE A +1 USUARIO
+        [HttpPost("toUsers")]
+        public IActionResult Send(MensajeViewModel messageVM)
+        {
+            try
+            {
+                if (messageVM.Mensaje != null)
+                {
+                    var emisor = Context.Set<Usuario>().Where(x => x.Id == messageVM.Mensaje.IdEmisor).FirstOrDefault();
+
+                    if (emisor.Rol != "Estudiante")
+                    {
+                        if (string.IsNullOrWhiteSpace(messageVM.Mensaje.Mensaje1))
+                        {
+                            ModelState.AddModelError("", "Ingrese el mensaje que quiere enviar.");
+                        }
+                        if (messageVM.Usuarios == null)
+                        {
+                            ModelState.AddModelError("", "Selecione destinatarios válidos.");
+                        }
+
+
+                        if (ModelState.IsValid)
+                        {
+                            foreach (var user in messageVM.Usuarios)
+                            {
+                                Mensaje message = new Mensaje()
+                                {
+                                    Fecha = DateTime.Now,
+                                    IdEmisor = emisor.Id,
+                                    IdRemitente = user.Id,
+                                    Mensaje1=messageVM.Mensaje.Mensaje1
+                                };
+                                reposMensajes.Insert(message);
+                            }
+                            return Ok();
+                        }
+                        else
+                        {
+                            return BadRequest(ModelState);
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest("Sólo usuarios de tipo administrativo y docentes pueden enviar mensajes.");
+                    }
+                }
+                else
+                {
+                    return BadRequest("No se puede enviar un mensaje sin datos.");
+                }
             }
             catch (Exception ex)
             {
@@ -135,27 +212,48 @@ namespace APIProyectoMensajeria.Controllers
 
         //EDITAR MENSAJE
         [HttpPut]
-        public IActionResult Put(Mensaje mssage)
+        public IActionResult Put(Mensaje message)
         {
             try
             {
-                //if (idMessage != 0)
-                //{
-                //    var message = reposMensajes.GetById(idMessage);
+                if (message != null)
+                {
+                    var msj = reposMensajes.GetById(message.Id);
 
-                //    if (message != null)
-                //    {
-                        return Ok(message);
-                //    }
-                //    else
-                //    {
-                //        return NotFound("No se encontró el mensaje.");
-                //    }
-                //}
-                //else
-                //{
-                //    return BadRequest("Solicitud incorrecta.");
-                //}
+                    if (msj != null)
+                    {
+                        if (string.IsNullOrWhiteSpace(message.Mensaje1))
+                        {
+                            ModelState.AddModelError("", "Ingrese el mensaje que quiere enviar.");
+                        }
+                        if (message.IdRemitente <= 0)
+                        {
+                            ModelState.AddModelError("", "Selecione destinatarios válidos.");
+                        }
+
+                        if (ModelState.IsValid)
+                        {
+                            msj.Mensaje1 = message.Mensaje1;
+                            msj.IdRemitente = message.IdRemitente;
+                            msj.Fecha = DateTime.Now;
+                            reposMensajes.Update(msj);
+                            return Ok();
+                        }
+                        else
+                        {
+                            return BadRequest(ModelState);
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest("Mensaje no encontrado.");
+                    }
+
+                }
+                else
+                {
+                    return BadRequest("No se puede actualizar un mensaje sin datos.");
+                }
             }
             catch (Exception ex)
             {

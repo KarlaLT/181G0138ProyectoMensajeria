@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using APIProyectoMensajeria.Models;
 using APIProyectoMensajeria.Repositories;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace APIProyectoMensajeria.Controllers
 {
@@ -20,7 +20,8 @@ namespace APIProyectoMensajeria.Controllers
             return Ok(reposUsuarios.GetAll());
         }
 
-        [HttpGet("{idUsuario}")] 
+        //MENSAJE A UN SÓLO USUARIO
+        [HttpGet("{idUsuario}")]
         public IActionResult Get(int idUsuario)
         {
             try
@@ -28,7 +29,7 @@ namespace APIProyectoMensajeria.Controllers
                 if (idUsuario != 0)
                 {
                     var user = reposUsuarios.GetById(idUsuario);
-                    if(user != null)
+                    if (user != null)
                     {
                         return Ok(user);
                     }
@@ -48,6 +49,7 @@ namespace APIProyectoMensajeria.Controllers
             }
         }
 
+        //MENSAJE POR GRUPO
         [HttpGet("group/{idGrupo}")]
         public IActionResult GetUsersByGroup(int idGrupo)
         {
@@ -55,29 +57,27 @@ namespace APIProyectoMensajeria.Controllers
             {
                 if (idGrupo != 0)
                 {
-                    List<Usuario> usuariosGrupo = new List<Usuario>();
-                    Repository<Clase> reposClases = new Repository<Clase>(Context);
-                    Repository<DatosClase> reposDatosClase = new Repository<DatosClase>(Context);
+                    List<Usuario> usuarios = new List<Usuario>();
 
-                    // var usersId = Context.Set<DatosClase>().Where(x => x.IdClaseNavigation.IdGrupo == idGrupo);
-                    var classes = reposClases.GetAll().Where(x=>x.IdGrupo==idGrupo).ToList();
-                    var datosclase = reposDatosClase.GetAll().Where(x => x.IdClase == 1).ToList();
+                    var usersByGroup = Context.Set<UsuariosClase>().Include(x => x.IdClaseNavigation).
+                        Where(x => x.IdClaseNavigation.IdGrupo == idGrupo).ToList();
 
-                    if (datosclase != null)
+                    if (usersByGroup != null)
                     {
-                        foreach (var user in datosclase)
+                        foreach (var user in usersByGroup)
                         {
                             var usuario = reposUsuarios.GetById(user.IdEstudiante);
 
                             if (usuario != null)
                             {
-                                usuariosGrupo.Add(usuario);
+                                if (!usuarios.Any(x => x.Id == usuario.Id))
+                                    usuarios.Add(usuario);
                             }
                         }
 
-                        if (usuariosGrupo.Count > 0)
+                        if (usuarios.Count > 0)
                         {
-                            return Ok(usuariosGrupo);
+                            return Ok(usuarios);
                         }
                         else
                         {
@@ -92,6 +92,107 @@ namespace APIProyectoMensajeria.Controllers
                 else
                 {
                     return NotFound("No se encontraron usuarios pertenecientes al grupo.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        //MENSAJE POR CLASE
+        [HttpGet("class/{idClase}")]
+        public IActionResult GetUsersByClass(int idClase)
+        {
+            try
+            {
+                if (idClase != 0)
+                {
+                    List<Usuario> usuarios = new List<Usuario>();
+
+                    var usersByClass = Context.Set<UsuariosClase>().Where(x =>x.IdClase==idClase).ToList();
+
+                    if (usersByClass != null)
+                    {
+                        foreach (var user in usersByClass)
+                        {
+                            var usuario = reposUsuarios.GetById(user.IdEstudiante);
+
+                            if (usuario != null)
+                            {
+                                if (!usuarios.Any(x => x.Id == usuario.Id))
+                                    usuarios.Add(usuario);
+                            }
+                        }
+
+                        if (usuarios.Count > 0)
+                        {
+                            return Ok(usuarios);
+                        }
+                        else
+                        {
+                            return NotFound("No se encontraron usuarios pertenecientes a la clase.");
+                        }
+                    }
+                    else
+                    {
+                        return NotFound("No se encontraron usuarios pertenecientes a la clase.");
+                    }
+                }
+                else
+                {
+                    return NotFound("No se encontraron usuarios pertenecientes a la clase.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        //MENSAJE POR CARRERA
+        [HttpGet("career/{idCarrera}")]
+        public IActionResult GetUsersByCareer(int idCarrera)
+        {
+            try
+            {
+                if (idCarrera != 0)
+                {
+                    List<Usuario> usuarios = new List<Usuario>();
+
+                    var usersByCareer = Context.Set<UsuariosClase>().Include(x=>x.IdClaseNavigation).ThenInclude(x=>x.IdGrupoNavigation)
+                        .Where(x => x.IdClaseNavigation.IdGrupoNavigation.IdCarrera==idCarrera).ToList();
+
+                    if (usersByCareer != null)
+                    {
+                        foreach (var user in usersByCareer)
+                        {
+                            var usuario = reposUsuarios.GetById(user.IdEstudiante);
+
+                            if (usuario != null)
+                            {
+                                if (!usuarios.Any(x => x.Id == usuario.Id))
+                                    usuarios.Add(usuario);
+                            }
+                        }
+
+                        if (usuarios.Count > 0)
+                        {
+                            return Ok(usuarios);
+                        }
+                        else
+                        {
+                            return NotFound("No se encontraron usuarios pertenecientes a la carrera.");
+                        }
+                    }
+                    else
+                    {
+                        return NotFound("No se encontraron usuarios pertenecientes a la carrera.");
+                    }
+                }
+                else
+                {
+                    return NotFound("No se encontraron usuarios pertenecientes a la carrera.");
                 }
             }
             catch (Exception ex)
