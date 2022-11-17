@@ -13,6 +13,38 @@ namespace APIProyectoMensajeria.Controllers
         static mensajeriatecnmContext Context = new();
         static Repositories.Repository<Usuario> reposUsuarios = new(Context);
 
+        //LOGIN
+        [HttpPost("login")]
+        public IActionResult GetUserLogin(LoginViewModel usuario)
+        {
+            if (string.IsNullOrEmpty(usuario.Correo))
+            {
+                ModelState.AddModelError("", "Ingrese su usuario.");
+            }
+            if (string.IsNullOrEmpty(usuario.Password))
+            {
+                ModelState.AddModelError("", "Ingrese su contraseña.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                var user = reposUsuarios.GetAll().Where(x=> x.Correo == usuario.Correo && x.Password== usuario.Password).FirstOrDefault();
+
+                if (user != null)
+                {
+                    return Ok(user);
+                }
+                else
+                {
+                    return Unauthorized("Usuario o contraseña incorrectos.");
+                }
+            }
+            else
+            {
+                return BadRequest("Solicitud incorrecta");
+            }
+        }
+
         //TRAER TODOS LOS USUARIOS REGISTRADOS
         [HttpGet]
         public IActionResult Get()
