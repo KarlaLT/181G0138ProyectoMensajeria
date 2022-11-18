@@ -9,7 +9,7 @@ namespace APIProyectoMensajeria.Controllers
     [ApiController]
     public class MensajesController : ControllerBase
     {
-        static mensajeriatecnmContext Context = new();
+        static itesrcne_mensajeriakarlaContext Context = new();
         static Repositories.Repository<Mensaje> reposMensajes = new(Context);
 
         //TRAER LOS MENSAJES QUE UN USUARIO RECIBE (POR ID REMITENTE)

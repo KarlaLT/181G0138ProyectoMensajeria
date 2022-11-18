@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace APIProyectoMensajeria.Models
 {
@@ -20,11 +19,8 @@ namespace APIProyectoMensajeria.Models
         public string Correo { get; set; } = null!;
         public string Password { get; set; } = null!;
 
-        [JsonIgnore]
         public virtual ICollection<Mensaje> MensajeIdEmisorNavigations { get; set; }
-        [JsonIgnore]
         public virtual ICollection<Mensaje> MensajeIdRemitenteNavigations { get; set; }
-        [JsonIgnore]
         public virtual ICollection<UsuariosClase> UsuariosClases { get; set; }
     }
 }

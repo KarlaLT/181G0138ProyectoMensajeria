@@ -10,8 +10,40 @@ namespace APIProyectoMensajeria.Controllers
     [ApiController]
     public class UsuariosController : ControllerBase
     {
-        static mensajeriatecnmContext Context = new();
+        static itesrcne_mensajeriakarlaContext Context = new();
         static Repositories.Repository<Usuario> reposUsuarios = new(Context);
+
+        //LOGIN
+        [HttpPost("login")]
+        public IActionResult GetUserLogin(LoginViewModel usuario)
+        {
+            if (string.IsNullOrEmpty(usuario.Correo))
+            {
+                ModelState.AddModelError("", "Ingrese su usuario.");
+            }
+            if (string.IsNullOrEmpty(usuario.Password))
+            {
+                ModelState.AddModelError("", "Ingrese su contraseña.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                var user = reposUsuarios.GetAll().Where(x => x.Correo == usuario.Correo && x.Password == usuario.Password).FirstOrDefault();
+
+                if (user != null)
+                {
+                    return Ok(user);
+                }
+                else
+                {
+                    return Unauthorized("Usuario o contraseña incorrectos.");
+                }
+            }
+            else
+            {
+                return BadRequest("Solicitud incorrecta");
+            }
+        }
 
         //TRAER TODOS LOS USUARIOS REGISTRADOS
         [HttpGet]
@@ -110,7 +142,7 @@ namespace APIProyectoMensajeria.Controllers
                 {
                     List<Usuario> usuarios = new List<Usuario>();
 
-                    var usersByClass = Context.Set<UsuariosClase>().Where(x =>x.IdClase==idClase).ToList();
+                    var usersByClass = Context.Set<UsuariosClase>().Where(x => x.IdClase == idClase).ToList();
 
                     if (usersByClass != null)
                     {
@@ -160,8 +192,8 @@ namespace APIProyectoMensajeria.Controllers
                 {
                     List<Usuario> usuarios = new List<Usuario>();
 
-                    var usersByCareer = Context.Set<UsuariosClase>().Include(x=>x.IdClaseNavigation).ThenInclude(x=>x.IdGrupoNavigation)
-                        .Where(x => x.IdClaseNavigation.IdGrupoNavigation.IdCarrera==idCarrera).ToList();
+                    var usersByCareer = Context.Set<UsuariosClase>().Include(x => x.IdClaseNavigation).ThenInclude(x => x.IdGrupoNavigation)
+                        .Where(x => x.IdClaseNavigation.IdGrupoNavigation.IdCarrera == idCarrera).ToList();
 
                     if (usersByCareer != null)
                     {
