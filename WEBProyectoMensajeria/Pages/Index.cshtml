@@ -42,6 +42,16 @@
                 navigator.serviceWorker.register('/serviceworker.js');
             //});
         }
+
+        //verificar si el usuario está autenticado para saber a dónde redirigir
+if (localStorage.token) {
+    if (localStorage.rol == "Estudiante") {
+        window.location.href = "/Student";
+    }
+    else {
+        window.location.href = "/Administrative";
+    }
+}
 </script>
 </body>
 </html>

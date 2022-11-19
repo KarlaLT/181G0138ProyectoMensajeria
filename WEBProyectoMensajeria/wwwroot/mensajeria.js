@@ -9,6 +9,7 @@ var usuario = document.getElementById("correo");
 var password = document.getElementById("password");
 var btnLogin = document.querySelector(".login a");
 
+
 if (btnLogin) {
     btnLogin.addEventListener("click", function () {
         Login();
@@ -34,21 +35,28 @@ if (btnLogin) {
 
         var result = await fetch(request);
 
-        if (result.ok) { //solicitud exitosa
-            let datos = await result.json();
+        if (result.ok) { //solicitud exitosa, devuelve el token
+            let token = await result.json();
 
-            //ver a index irá según su rol
-            if (datos.rol == "Estudiante") {
+            localStorage.token = token; //guardarlo en localstorage
+            let array = token.split('.');
+            let datos = array[1];
+
+            // Decode the String
+            var decodedStringAtoB = atob(datos);
+            var json = JSON.parse(decodedStringAtoB)
+
+            //guardar datos del usuario
+            localStorage.nameUsuario = json.name;
+            localStorage.idUsuario = json.nameid;
+            localStorage.rol = json.role;
+
+            if (localStorage.rol == "Estudiante") {
                 window.location.href = "/Student";
             }
             else {
                 window.location.href = "/Administrative";
             }
-
-            localStorage.idUsuario = datos.id;
-            localStorage.nameUsuario = datos.nombre;
-            localStorage.rol = datos.rol;
-
         }
         else {
             console.log(result);
@@ -64,7 +72,13 @@ nameUsuario.innerText = "¡Bienvenido (a), " + localStorage.nameUsuario + "!";
 if (plantillaMensaje) {
 
     async function getMensajesRecibidos() {
-        var result = await fetch(urlAPI + "mensajes/receive/" + localStorage.idUsuario);
+        var result = await fetch(urlAPI + "mensajes/receive/" + localStorage.idUsuario, {
+            method:"GET",
+            mode: "cors",
+            headers: new Headers({
+                'Authorization': 'Bearer ' + localStorage.token
+            }),
+        });
 
         //verificar resultado
         if (result.ok) {

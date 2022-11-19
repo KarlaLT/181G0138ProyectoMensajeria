@@ -3,6 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using APIProyectoMensajeria.Models;
 using APIProyectoMensajeria.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace APIProyectoMensajeria.Controllers
 {
@@ -12,6 +18,14 @@ namespace APIProyectoMensajeria.Controllers
     {
         static itesrcne_mensajeriakarlaContext Context = new();
         static Repositories.Repository<Usuario> reposUsuarios = new(Context);
+
+        //Para traernos lo que tenemos en la configuracion del Jwt
+        public IConfiguration Configuration { get; }
+
+        public UsuariosController(IConfiguration config)
+        {
+            Configuration = config;
+        }
 
         //LOGIN
         [HttpPost("login")]
@@ -32,7 +46,31 @@ namespace APIProyectoMensajeria.Controllers
 
                 if (user != null)
                 {
-                    return Ok(user);
+                    //Crear la identidad del usuario.
+                    List<Claim> claims = new List<Claim>();
+                    claims.Add(new Claim(ClaimTypes.Name, user.Nombre));
+                    claims.Add(new Claim(ClaimTypes.Role, user.Rol));
+                    claims.Add(new Claim(ClaimTypes.NameIdentifier, $"{user.Id}"));
+
+                    //Crear un token.
+                    var handler = new JwtSecurityTokenHandler();
+                    var descriptor = new SecurityTokenDescriptor();
+
+                    descriptor.Issuer = Configuration["Jwt:Issuer"];
+                    descriptor.Audience = Configuration["Jwt:Audience"];
+
+                    //La identidad a quien se emite el token.
+                    descriptor.Subject = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
+
+                    //En cuanto tiempo se expira el token que mandamos
+                    descriptor.Expires = DateTime.UtcNow.AddDays(10);
+                    descriptor.IssuedAt = DateTime.UtcNow;
+                    descriptor.SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Secret"])), SecurityAlgorithms.HmacSha256);
+
+                    var token = handler.CreateToken(descriptor);
+                    var tokenSerializado = handler.WriteToken(token);
+
+                    return Ok(tokenSerializado);
                 }
                 else
                 {
@@ -46,6 +84,7 @@ namespace APIProyectoMensajeria.Controllers
         }
 
         //TRAER TODOS LOS USUARIOS REGISTRADOS
+        [Authorize]
         [HttpGet]
         public IActionResult Get()
         {
@@ -53,6 +92,7 @@ namespace APIProyectoMensajeria.Controllers
         }
 
         //MENSAJE A UN SÓLO USUARIO
+        [Authorize]
         [HttpGet("{idUsuario}")]
         public IActionResult Get(int idUsuario)
         {
@@ -82,6 +122,7 @@ namespace APIProyectoMensajeria.Controllers
         }
 
         //MENSAJE POR GRUPO
+        [Authorize]
         [HttpGet("group/{idGrupo}")]
         public IActionResult GetUsersByGroup(int idGrupo)
         {
@@ -133,6 +174,7 @@ namespace APIProyectoMensajeria.Controllers
         }
 
         //MENSAJE POR CLASE
+        [Authorize]
         [HttpGet("class/{idClase}")]
         public IActionResult GetUsersByClass(int idClase)
         {
@@ -183,6 +225,7 @@ namespace APIProyectoMensajeria.Controllers
         }
 
         //MENSAJE POR CARRERA
+        [Authorize]
         [HttpGet("career/{idCarrera}")]
         public IActionResult GetUsersByCareer(int idCarrera)
         {

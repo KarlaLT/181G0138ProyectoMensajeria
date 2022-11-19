@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using APIProyectoMensajeria.Models;
 using APIProyectoMensajeria.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace APIProyectoMensajeria.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MensajesController : ControllerBase
     {
         static itesrcne_mensajeriakarlaContext Context = new();
