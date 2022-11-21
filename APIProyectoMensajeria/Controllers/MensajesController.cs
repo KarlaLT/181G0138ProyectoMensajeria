@@ -8,7 +8,7 @@ namespace APIProyectoMensajeria.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class MensajesController : ControllerBase
     {
         static itesrcne_mensajeriakarlaContext Context = new();
@@ -23,7 +23,7 @@ namespace APIProyectoMensajeria.Controllers
                 if (idRemitente != 0)
                 {
                     var messages = reposMensajes.GetAll().Where(x => x.IdRemitente == idRemitente);
-
+                   
                     if (messages != null)
                     {
                         return Ok(messages);

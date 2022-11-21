@@ -84,7 +84,7 @@ namespace APIProyectoMensajeria.Controllers
         }
 
         //TRAER TODOS LOS USUARIOS REGISTRADOS
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public IActionResult Get()
         {
@@ -92,7 +92,7 @@ namespace APIProyectoMensajeria.Controllers
         }
 
         //MENSAJE A UN SÓLO USUARIO
-        [Authorize]
+        //[Authorize]
         [HttpGet("{idUsuario}")]
         public IActionResult Get(int idUsuario)
         {
@@ -122,7 +122,7 @@ namespace APIProyectoMensajeria.Controllers
         }
 
         //MENSAJE POR GRUPO
-        [Authorize]
+        //[Authorize]
         [HttpGet("group/{idGrupo}")]
         public IActionResult GetUsersByGroup(int idGrupo)
         {
@@ -174,7 +174,7 @@ namespace APIProyectoMensajeria.Controllers
         }
 
         //MENSAJE POR CLASE
-        [Authorize]
+        //[Authorize]
         [HttpGet("class/{idClase}")]
         public IActionResult GetUsersByClass(int idClase)
         {
@@ -225,7 +225,7 @@ namespace APIProyectoMensajeria.Controllers
         }
 
         //MENSAJE POR CARRERA
-        [Authorize]
+        //[Authorize]
         [HttpGet("career/{idCarrera}")]
         public IActionResult GetUsersByCareer(int idCarrera)
         {

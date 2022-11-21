@@ -12,7 +12,7 @@
 
 <body class="bodyInicio">
     <header>
-        <h1></h1>
+        <h1 class="nameUser"></h1>
 
         <div>
              <img src="~/img/Imagen1.png" />
@@ -20,7 +20,7 @@
             <ul class="options">
                                 <li><a href="/Administrative">Recibidos</a></li>
                 <li><a href="/Sent">Enviados</a></li>
-                <li><a href="/Index">Cerrar Sesión</a></li>
+                <li ><a data-logout="/Index" href="/Index">Cerrar Sesión</a></li>
             </ul>
         </nav>
         </div>
@@ -54,19 +54,19 @@
         </section>
 
         <template id="plantillaMensaje"> 
-            <div>
+            <div data-modal="seeMessage">
                 <label></label>
                 <p></p>
                 <label></label>
             </div>
         </template>
 
-        <a href="#" class="btn-flotante">+</a>
+        <a data-modal="newMessage" class="btn-flotante">+</a>
 
     </main>
 
 
-    <div class="modal">
+    <div class="modal" id="newMessage">
 
             <form>
                 <h4>Detalles del mensaje</h4>
@@ -85,7 +85,7 @@
 
             <div>
                  <input type="submit" value="Enviar" />
-                    <a href="/Administrative" >X Cerrar</a>
+                <a data-cancel="1">X Cerrar</a>
                 </div>
 
 
@@ -95,7 +95,7 @@
     </div>
 
     
-      <div class="modal seeMessage">
+      <div class="modal" id="seeMessage">
 
             <form>
                 <h4>Detalles del mensaje</h4>
@@ -109,7 +109,7 @@
 
  <p>Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
             <div>
-                    <a href="/Administrative" >X Cerrar</a>
+                <a data-cancel="1">X Cerrar</a>
                 </div>
 
 
@@ -122,15 +122,15 @@
      
     <script src="~/mensajeria.js"></script>
     <script>
-    var modal = document.querySelector(".modal");
-    var btnFlotante = document.querySelector(".btn-flotante");
+    //var modal = document.querySelector(".modal");
+    //var btnFlotante = document.querySelector(".btn-flotante");
     var options = document.querySelector("header div img");
     var menu = document.querySelector(".options");
         var modalMessage = document.querySelector(".seeMessage");
 
-    btnFlotante.addEventListener("click", function(){
-        modal.style.top=0;
-    });
+    //btnFlotante.addEventListener("click", function(){
+    //    modal.style.top=0;
+    //});
 
     options.addEventListener("click", function(){
         if(menu.style.display!="block"){
@@ -141,11 +141,11 @@
         }
     });
 
-     var message = document.querySelector(".messages div");
+    // var message = document.querySelector(".messages div");
 
-    message.addEventListener("click", function(){
-        modalMessage.style.top=0;
-    });
+    //message.addEventListener("click", function(){
+    //    modalMessage.style.top=0;
+    //});
     </script>
 
 

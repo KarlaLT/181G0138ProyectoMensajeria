@@ -13,12 +13,12 @@
 
 <body class="bodyInicio">
     <header>
-        <h1>¡Bienvenido (a), Karla!</h1>
+        <h1 class="nameUser"></h1>
         <div>
              <img src="~/img/Imagen1.png" />
          <nav>
             <ul class="options">
-                <li><a href="/Index">Cerrar Sesión</a></li>
+                <li ><a data-logout="/Index" href="/Index">Cerrar Sesión</a></li>
             </ul>
         </nav>
         </div>
@@ -46,61 +46,12 @@
 
 
         <section class="messages">
-            <div>
-                <label>De: Dirección académica</label>
-                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
-                <label>28/10/2022 12:55pm</label>
-            </div>
-             <div>
-                <label>De: Dirección académica</label>
-                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
-                <label>28/10/2022 12:55pm</label>
-            </div>
-             <div>
-                <label>De: Dirección académica</label>
-                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
-                <label>28/10/2022 12:55pm</label>
-            </div>
-             <div>
-                <label>De: Dirección académica</label>
-                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
-                <label>28/10/2022 12:55pm</label>
-            </div>
-             <div>
-                <label>De: Dirección académica</label>
-                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
-                <label>28/10/2022 12:55pm</label>
-            </div>
-             <div>
-                <label>De: Dirección académica</label>
-                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
-                <label>28/10/2022 12:55pm</label>
-            </div>
-             <div>
-                <label>De: Dirección académica</label>
-                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
-                <label>28/10/2022 12:55pm</label>
-            </div>
-             <div>
-                <label>De: Dirección académica</label>
-                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
-                <label>28/10/2022 12:55pm</label>
-            </div>
-             <div>
-                <label>De: Dirección académica</label>
-                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
-                <label>28/10/2022 12:55pm</label>
-            </div>
-             <div>
-                <label>De: Dirección académica</label>
-                <p>Mensaje: Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
-                <label>28/10/2022 12:55pm</label>
-            </div>
+        
         </section>
 
     </main>
 
-      <div class="modal">
+      <div class="modal" data-modal="seeMessage">
 
             <form>
                 <h4>Detalles del mensaje</h4>
@@ -114,7 +65,7 @@
 
  <p>Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
             <div>
-                    <a href="/Student" >X Cerrar</a>
+                <a data-cancel="1">X Cerrar</a>
                 </div>
 
 
@@ -125,10 +76,10 @@
 
 
       <script>
-    var modal = document.querySelector(".modal");
+ //   var modal = document.querySelector(".modal");
     var options = document.querySelector("header div img");
     var menu = document.querySelector(".options");
-    var message = document.querySelector(".messages div");
+   // var message = document.querySelector(".messages div");
 
     options.addEventListener("click", function(){
         if(menu.style.display!="block"){
@@ -139,9 +90,9 @@
         }
     });
 
-    message.addEventListener("click", function(){
-        modal.style.top=0;
-    });
+    //message.addEventListener("click", function(){
+    //    modal.style.top=0;
+    //});
 
     </script>
 
