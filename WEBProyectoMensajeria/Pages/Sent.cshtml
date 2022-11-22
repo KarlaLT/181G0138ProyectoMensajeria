@@ -60,30 +60,24 @@
     </main>
 
 
-    <div class="modal" id="newMessage">
+    <div class="modal" id="newMessage" >
 
-        <form>
+        <form method="post" data-action="Mensajes">
             <h4>Detalles del mensaje</h4>
 
             <div>
                 <label>Para:</label>
-                <select>
-                    <option>9.1G</option>
-                    <option>7.2G</option>
+                <select name="IdRemitente">
                 </select>
             </div>
-
             <label>Mensaje:</label>
 
-            <textarea> </textarea>
+            <textarea name="Mensaje1"> </textarea>
 
             <div>
                 <input type="submit" value="Enviar" />
-                <a href="/Sent">X Cerrar</a>
+                <a data-cancel="1">X Cerrar</a>
             </div>
-
-
-
         </form>
 
     </div>

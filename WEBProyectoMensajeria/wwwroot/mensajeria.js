@@ -82,7 +82,10 @@ if (sectionMsj) {
                 method: "GET",
                 mode: "cors",
                 headers: new Headers({
-                    "Authorization": "Bearer " + localStorage.token
+                    "Authorization": "Bearer " + localStorage.token,
+                    "Access-Control-Allow-Headers": "Content-Type",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "*"
                 }),
             });
 
@@ -104,7 +107,12 @@ if (sectionMsj) {
                 method: "GET",
                 mode: "cors",
                 headers: new Headers({
-                    "Authorization": "Bearer " + localStorage.token
+                    "Authorization": "Bearer " + localStorage.token,
+                    "Access-Control-Allow-Headers": "Content-Type",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "*",
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
                 }),
             });
 
@@ -178,7 +186,6 @@ if (sectionMsj) {
                 div.children[2].innerText = o.fecha;
             }
             else {
-                console.log(div);
                 div.children[0].children[0].innerText = "Para: " + datosUsuario.nombre;
                 div.children[1].innerText = "Mensaje: " + o.mensaje1;
                 div.children[2].innerText = o.fecha;
@@ -215,7 +222,10 @@ document.addEventListener("click", function (event){
     if (event.target.dataset.idvermensaje) {
         verMensaje(event.target.dataset.idvermensaje);
     }
-
+    //si eestá mandando llamar a un filtro
+    if (event.target.dataset.filtro) {
+        filtrar(event.target.dataset.filtro);
+    }
 
 });
 
@@ -224,8 +234,11 @@ async function verMensaje(idMensaje) {
         method: "GET",
         mode: "cors",
         headers: new Headers({
-            "Authorization": "Bearer " + localStorage.token
-        }),
+            "Authorization": "Bearer " + localStorage.token,
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*"
+        })
     });
 
     if (result.ok) {
@@ -258,21 +271,44 @@ document.addEventListener("submit", async function (event) {
         idRemitente: form.children[1].children[1].value,
         mensaje1: form.children[3].value
     };
+
     //Hacemos un fetch a la API y para hacer por POST debemos pasar el RequestInfo y eso va en las llavesitas
-    let response = await fetch(urlApi + form.dataset.action, {
+    let request = new Request(urlAPI + form.dataset.action, {
         method: form.method,
         //El cuerpo siempre debe ser string no permite enviar un json.
         body: JSON.stringify(json),
         //SI la api te obliga a que le pongas JSON
         headers: {
-            "content-type": "application-json",
-        }
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*",
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        mode: "cors"
     });
+
+    var result = await fetch(request);
+    if (result.ok) {
+        window.location.reload();
+    }
+    else {
+        console.log(result);
+    }
 });
 
 //llenar select de usuarios para seleccionar remitente
 async function getUsuarios() {
-    var result = await fetch(urlAPI + "usuarios");
+    var result = await fetch(urlAPI + "usuarios", {
+        method: "GET",
+        headers: new Headers({
+            "Authorization": "Bearer " + localStorage.token,
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*"
+        }),
+        mode: "cors"
+    });
 
     if (result.ok) {
         usuarios = await result.json();
@@ -288,5 +324,38 @@ async function getUsuarios() {
                 })
             });
         }        
+    }
+}
+
+function filtrar(parametro) {
+    if (parametro == "hoy") {
+        let hoy = new Date();
+        let fechaHoy = `${hoy.getFullYear()}-${(hoy.getMonth() < 10 ? '0' : '').concat(hoy.getMonth() + 1)}-${(hoy.getDate() < 10 ? '0' : '').concat(hoy.getDate())}`;
+        let array;
+
+        for (var i = 0; i < sectionMsj.children.length; i++) {
+            let child = sectionMsj.children[i];
+            //children 2 en recibidos y enviados  
+            if (child.children[2].innerText.includes(fechaHoy)){
+                array[i] = child;
+            }
+        }
+        for (var i = 0; i < sectionMsj.children.length; i++) {
+            let child = sectionMsj.children[i];
+            if (i < array.length) {
+                //reemplazar renglones de la tabla por los filtrados
+                child == array[i];
+            }
+            else {
+                //ocultar renglones que no se necesitan
+                child.style.display = "none";
+            }
+        }
+    }
+    else if (parametro == "ayer") {
+
+    }
+    else if (parametro == "todos") {
+
     }
 }

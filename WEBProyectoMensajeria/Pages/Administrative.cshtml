@@ -15,14 +15,14 @@
         <h1 class="nameUser"></h1>
 
         <div>
-             <img src="~/img/Imagen1.png" />
-         <nav>
-            <ul class="options">
-                                <li><a href="/Administrative">Recibidos</a></li>
-                <li><a href="/Sent">Enviados</a></li>
-                <li ><a data-logout="/Index" href="/Index">Cerrar Sesión</a></li>
-            </ul>
-        </nav>
+            <img src="~/img/Imagen1.png" />
+            <nav>
+                <ul class="options">
+                    <li><a href="/Administrative">Recibidos</a></li>
+                    <li><a href="/Sent">Enviados</a></li>
+                    <li><a data-logout="/Index" href="/Index">Cerrar Sesión</a></li>
+                </ul>
+            </nav>
         </div>
 
     </header>
@@ -32,9 +32,9 @@
             <p>Revisa tus nuevos mensajes</p>
 
             <div>
-                <a href="#">Hoy</a>
-                <a href="#">Ayer</a>
-                <a href="#">Todos</a>
+                <a data-filtro="hoy">Hoy</a>
+                <a data-filtro="ayer">Ayer</a>
+                <a data-filtro="todos">Todos</a>
             </div>
 
 
@@ -49,11 +49,9 @@
 
 
         <section class="messages">
-            
-            
         </section>
 
-        <template id="plantillaMensaje"> 
+        <template id="plantillaMensaje">
             <div>
                 <label></label>
                 <p></p>
@@ -66,52 +64,52 @@
     </main>
 
 
-    <div class="modal" id="newMessage" data-action="Mensajes">
+    <div class="modal" id="newMessage" >
 
-            <form>
-                <h4>Detalles del mensaje</h4>
+        <form method="post" data-action="Mensajes">
+            <h4>Detalles del mensaje</h4>
 
-               <div>
-                    <label>Para:</label>
-                   <select name="IdRemitente">
-</select>
-</div>
+            <div>
+                <label>Para:</label>
+                <select name="IdRemitente">
+                </select>
+            </div>
             <label>Mensaje:</label>
 
             <textarea name="Mensaje1"> </textarea>
 
             <div>
-                 <input type="submit" value="Enviar" />
+                <input type="submit" value="Enviar" />
                 <a data-cancel="1">X Cerrar</a>
-                </div>
+            </div>
         </form>
 
     </div>
 
     <div class="modal" id="seleccionarUsuarios">
         <form>
-             <h4>Seleccione 1 ó más remitentes</h4>
+            <h4>Seleccione 1 ó más remitentes</h4>
 
         </form>
     </div>
 
 
-     <div class="modal" id="seeMessage">
+    <div class="modal" id="seeMessage">
 
-            <form>
-                <h4>Detalles del mensaje</h4>
+        <form>
+            <h4>Detalles del mensaje</h4>
 
-               <div>
-                    <label>Para:</label>
-                    <label name="Remitente"></label>
+            <div>
+                <label>Para:</label>
+                <label name="Remitente"></label>
             </div>
 
             <label>Mensaje:</label>
 
- <p name="Mensaje1"></p>
+            <p name="Mensaje1"></p>
             <div>
                 <a data-cancel="1">X Cerrar</a>
-                </div>
+            </div>
 
 
 
@@ -121,33 +119,33 @@
 
 
 
-     
+
     <script src="~/mensajeria.js"></script>
     <script>
-    //var modal = document.querySelector(".modal");
-    //var btnFlotante = document.querySelector(".btn-flotante");
-    var options = document.querySelector("header div img");
-    var menu = document.querySelector(".options");
-        var modalMessage = document.querySelector(".seeMessage");
+        //var modal = document.querySelector(".modal");
+        //var btnFlotante = document.querySelector(".btn-flotante");
+        var options = document.querySelector("header div img");
+        var menu = document.querySelector(".options");
+            var modalMessage = document.querySelector(".seeMessage");
 
-    //btnFlotante.addEventListener("click", function(){
-    //    modal.style.top=0;
-    //});
+        //btnFlotante.addEventListener("click", function(){
+        //    modal.style.top=0;
+        //});
 
-    options.addEventListener("click", function(){
-        if(menu.style.display!="block"){
-                    menu.style.display="block";
-        }
-                else{
-                    menu.style.display="none";
-        }
-    });
+        options.addEventListener("click", function(){
+            if(menu.style.display!="block"){
+                        menu.style.display="block";
+            }
+                    else{
+                        menu.style.display="none";
+            }
+        });
 
-    // var message = document.querySelector(".messages div");
+        // var message = document.querySelector(".messages div");
 
-    //message.addEventListener("click", function(){
-    //    modalMessage.style.top=0;
-    //});
+        //message.addEventListener("click", function(){
+        //    modalMessage.style.top=0;
+        //});
     </script>
 
 

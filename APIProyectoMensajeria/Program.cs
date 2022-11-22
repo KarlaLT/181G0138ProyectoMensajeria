@@ -1,19 +1,24 @@
+using APIProyectoMensajeria.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-string _MyCors = "MyCors";
+//string _MyCors = "MyCors";
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddCors();
 
-builder.Services.AddCors(options =>
-            {
-                options.AddPolicy(name: _MyCors, builder =>
-                {
-                    builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
-                    .AllowAnyHeader().AllowAnyMethod();
-                });
-            });
+//builder.Services.AddCors(options =>
+//            {
+//                options.AddPolicy(name: _MyCors, builder =>
+//                {
+//                    builder.SetIsOriginAllowed(origin => true)
+//                    .AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+//                });
+//            });
+builder.Services.AddControllers();
+builder.Services.AddDbContext<itesrcne_mensajeriakarlaContext>(optionsBuilder=> optionsBuilder.UseMySql("server=204.93.216.11;database=itesrcne_mensajeriakarla;user=itesrcne_karla;password=V4UvcrsVy4cm5g9", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.3.29-mariadb")));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
                 options =>
@@ -31,7 +36,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.AddMvc();
 var app = builder.Build();
 
-app.UseCors(_MyCors);
+app.UseCors(builder =>
+{
+    builder.AllowAnyOrigin()
+           .AllowAnyMethod()
+           .AllowAnyHeader();
+});
+
 app.UseRouting();
 app.UseAuthorization();
 app.UseEndpoints(endpoints => endpoints.MapDefaultControllerRoute());
