@@ -54,7 +54,7 @@
         </section>
 
         <template id="plantillaMensaje"> 
-            <div data-modal="seeMessage">
+            <div>
                 <label></label>
                 <p></p>
                 <label></label>
@@ -66,48 +66,49 @@
     </main>
 
 
-    <div class="modal" id="newMessage">
+    <div class="modal" id="newMessage" data-action="Mensajes">
 
             <form>
                 <h4>Detalles del mensaje</h4>
 
                <div>
                     <label>Para:</label>
-                    <select >
-                    <option>9.1G</option>
-                    <option>7.2G</option>
-            </select>
-            </div>
-
+                   <select name="IdRemitente">
+</select>
+</div>
             <label>Mensaje:</label>
 
-            <textarea> </textarea>
+            <textarea name="Mensaje1"> </textarea>
 
             <div>
                  <input type="submit" value="Enviar" />
                 <a data-cancel="1">X Cerrar</a>
                 </div>
-
-
-
         </form>
 
     </div>
 
-    
-      <div class="modal" id="seeMessage">
+    <div class="modal" id="seleccionarUsuarios">
+        <form>
+             <h4>Seleccione 1 ó más remitentes</h4>
+
+        </form>
+    </div>
+
+
+     <div class="modal" id="seeMessage">
 
             <form>
                 <h4>Detalles del mensaje</h4>
 
                <div>
                     <label>Para:</label>
-                    <label>9.2G</label>
+                    <label name="Remitente"></label>
             </div>
 
             <label>Mensaje:</label>
 
- <p>Por motivo de graduación, jueves 28 de octubre se suspenden clases en general...</p>
+ <p name="Mensaje1"></p>
             <div>
                 <a data-cancel="1">X Cerrar</a>
                 </div>
@@ -117,6 +118,7 @@
         </form>
 
     </div>
+
 
 
      

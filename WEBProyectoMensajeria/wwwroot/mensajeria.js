@@ -4,6 +4,7 @@ const plantillaMensaje = document.getElementById("plantillaMensaje");
 const plantillaSent = document.getElementById("plantillaCRUD");
 const sectionMsj = document.querySelector(".messages");
 let datosUsuario;
+let usuarios;
 
 //PÁGINA INDEX
 var usuario = document.getElementById("correo");
@@ -12,7 +13,7 @@ var btnLogin = document.querySelector(".login a");
 
 
 if (btnLogin) {
-    btnLogin.addEventListener("click", function () {
+    btnLogin.addEventListener("click",  function () {
         Login();
     });
 
@@ -66,12 +67,15 @@ if (btnLogin) {
     }
 }
 
+
 //ADMINISTRATIVE/STUDENT
 let nameUsuario = document.querySelector("body header .nameUser");
 nameUsuario.innerText = "¡Bienvenido (a), " + localStorage.nameUsuario + "!";
 
 if (sectionMsj) {
-
+    if (!usuarios) {
+         getUsuarios();
+    }
     if (plantillaSent) {
         async function getMensajesEnviados() {
             var result = await fetch(urlAPI + "mensajes/sent/" + localStorage.idUsuario, {
@@ -162,7 +166,6 @@ if (sectionMsj) {
             datosUsuario = await result.json();
             //poner datos de usuario
             let div = sectionMsj.children[i];
-            
 
             if (tipoMensaje == "recibidos") {
                 if (datosUsuario) {
@@ -180,7 +183,9 @@ if (sectionMsj) {
                 div.children[1].innerText = "Mensaje: " + o.mensaje1;
                 div.children[2].innerText = o.fecha;
             }
-          
+            div.setAttribute("data-idVerMensaje", o.id);
+            var children = Array.from(div.children);
+            children.forEach(x => x.setAttribute("data-idVerMensaje", o.id));
         }
         else {
             datosUsuario = null;
@@ -206,7 +211,82 @@ document.addEventListener("click", function (event){
         //Buscamos el elemento mas cercano que tenga el id .modal y lo escondemos.
         event.target.closest(".modal").style.top = '-100vh';
     }
+    //si el data es para ver un mensaje
+    if (event.target.dataset.idvermensaje) {
+        verMensaje(event.target.dataset.idvermensaje);
+    }
 
 
 });
 
+async function verMensaje(idMensaje) {
+    var result = await fetch(urlAPI + "mensajes/"+idMensaje, {
+        method: "GET",
+        mode: "cors",
+        headers: new Headers({
+            "Authorization": "Bearer " + localStorage.token
+        }),
+    });
+
+    if (result.ok) {
+        let json = await result.json();
+        let modal = document.getElementById("seeMessage");
+        let form = modal.children[0];
+        if (plantillaMensaje) {
+            form.children[1].children[1].innerText =usuarios.find(x => x.id == json.idEmisor).nombre; 
+        }
+        else if (plantillaSent) {
+            form.children[1].children[1].innerText = usuarios.find(x => x.id == json.idRemitente).nombre;
+        }
+        form.children[3].innerText = json.mensaje1;
+
+        modal.style.top = 0;
+    }
+    else {
+        console.log(result);
+    }
+}
+
+document.addEventListener("submit", async function (event) {
+    //cancelar el evento submit
+    event.preventDefault();
+
+    let form = event.target;
+    //FormData estan todos los names que tiene el formulario
+    let json = {
+        idEmisor: localStorage.idUsuario,
+        idRemitente: form.children[1].children[1].value,
+        mensaje1: form.children[3].value
+    };
+    //Hacemos un fetch a la API y para hacer por POST debemos pasar el RequestInfo y eso va en las llavesitas
+    let response = await fetch(urlApi + form.dataset.action, {
+        method: form.method,
+        //El cuerpo siempre debe ser string no permite enviar un json.
+        body: JSON.stringify(json),
+        //SI la api te obliga a que le pongas JSON
+        headers: {
+            "content-type": "application-json",
+        }
+    });
+});
+
+//llenar select de usuarios para seleccionar remitente
+async function getUsuarios() {
+    var result = await fetch(urlAPI + "usuarios");
+
+    if (result.ok) {
+        usuarios = await result.json();
+
+        var selects = document.querySelectorAll("[name=IdRemitente]");
+        if (selects) {
+            selects.forEach(select => {
+                usuarios.forEach(x => {
+                    let option = document.createElement("OPTION");
+                    option.innerText = x.nombre;
+                    option.value = x.id;
+                    select.options.add(option);
+                })
+            });
+        }        
+    }
+}
