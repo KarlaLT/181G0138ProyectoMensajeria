@@ -15,6 +15,7 @@ async function verificar(event) { //CACHE FIRST
             let clientid = event.clientid; //identificador de la pestaña del navegador (para saber qué pestaña se tiene que actualizar)
 
             revalidar(exist.clone(), clientid); //guardada está STALE
+            exist = await cache.match(event.request);
             return exist;
         }
         else {
@@ -24,9 +25,9 @@ async function verificar(event) { //CACHE FIRST
             return result;
         }
     }
-    //else {
-    //    return await fetch(event.request.url);
-    //}
+    else {
+        return await fetch(event.request);
+    }
 }
 
 

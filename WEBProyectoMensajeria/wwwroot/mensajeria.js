@@ -76,131 +76,15 @@ if (sectionMsj) {
     if (!usuarios) {
          getUsuarios();
     }
-    if (plantillaSent) {
-        async function getMensajesEnviados() {
-            var result = await fetch(urlAPI + "mensajes/sent/" + localStorage.idUsuario, {
-                method: "GET",
-                mode: "cors",
-                headers: new Headers({
-                    "Authorization": "Bearer " + localStorage.token,
-                    "Access-Control-Allow-Headers": "Content-Type",
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Methods": "*"
-                }),
-            });
-
-            //verificar resultado
-            if (result.ok) {
-                var mensajes = await result.json();
-                mostrarDatos(mensajes, "enviados");
-            }
-            else {
-                console.log(result);
-            }
-        }
-
+    if (plantillaSent) {       
         getMensajesEnviados();
     }
-    else if (plantillaMensaje) {
-        async function getMensajesRecibidos() {
-            var result = await fetch(urlAPI + "mensajes/receive/" + localStorage.idUsuario, {
-                method: "GET",
-                mode: "cors",
-                headers: new Headers({
-                    "Authorization": "Bearer " + localStorage.token,
-                    "Access-Control-Allow-Headers": "Content-Type",
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Methods": "*",
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }),
-            });
-
-            //verificar resultado
-            if (result.ok) {
-                var mensajes = await result.json();
-                mostrarDatos(mensajes, "recibidos");
-            }
-            else {
-                console.log(result);
-            }
-        }
-
+    else if (plantillaMensaje) {  
         getMensajesRecibidos();
-    }
-
-    async function mostrarDatos(mensajes, tipoMensajes) {
-        //mostrarlos en vista con plantilla
-        let cantidad = mensajes.length;
-
-        if (cantidad > sectionMsj.children.length) {
-            let n = cantidad - sectionMsj.children.length
-            for (let x = 0; x < n; x++) { //si la cantidad  de datos es más grande de los ya existentes, sólo se agregan las plantillas que faltan
-                if (tipoMensajes == "recibidos") {
-                    let clon = plantillaMensaje.content.children[0].cloneNode(true);
-                    sectionMsj.append(clon); //agregar a la tabla
-                }
-                else {
-                    if (plantillaSent) {
-                        let clon = plantillaSent.content.children[0].cloneNode(true);
-                        sectionMsj.append(clon); //agregar a la tabla
-                    }                 
-                }              
-            }
-
-        }
-        else if (cantidad < sectionMsj.children.length) { //si son menos, se eliminan las plantillas que sobran
-            let n = sectionMsj.children.length - cantidad
-            for (var x = 0; x < n; x++) {
-                sec.lastChild.remove();
-            }
-        }
-
-        //ya son iguales el num de plantillas y el num de datos, se llena con la info correcta actualizada
-        mensajes.forEach((o, i) => { //i:indice, o:objeto 
-            if (tipoMensajes == "recibidos") {
-                getDatos(o.idEmisor, o, i, tipoMensajes);           
-            }
-            else {
-                getDatos(o.idRemitente, o, i, tipoMensajes);           
-            }
-        });
-    }
-
-    async function getDatos(idUsuario, o, i, tipoMensaje) {
-        var result = await fetch(urlAPI + "usuarios/" + idUsuario);
-
-        if (result.ok) {
-            datosUsuario = await result.json();
-            //poner datos de usuario
-            let div = sectionMsj.children[i];
-
-            if (tipoMensaje == "recibidos") {
-                if (datosUsuario) {
-                    div.children[0].innerText = "De: " + datosUsuario.nombre;
-                }
-                else {
-                    div.children[0].innerText = "No se localizaron datos del usuario.";
-                }
-                div.children[1].innerText = "Mensaje: " + o.mensaje1;
-                div.children[2].innerText = o.fecha;
-            }
-            else {
-                div.children[0].children[0].innerText = "Para: " + datosUsuario.nombre;
-                div.children[1].innerText = "Mensaje: " + o.mensaje1;
-                div.children[2].innerText = o.fecha;
-            }
-            div.setAttribute("data-idVerMensaje", o.id);
-            var children = Array.from(div.children);
-            children.forEach(x => x.setAttribute("data-idVerMensaje", o.id));
-        }
-        else {
-            datosUsuario = null;
-        }
     }
 }
 
-document.addEventListener("click", function (event){
+document.addEventListener("click", async function (event){
     if (event.target.dataset.logout) {
         //cerrar sésión
         localStorage.removeItem("token");
@@ -211,6 +95,36 @@ document.addEventListener("click", function (event){
 
     //ver el modal que venga en el dataset del target
     if (event.target.dataset.modal) {
+        let modal = document.getElementById(event.target.dataset.modal);
+        if (event.target.dataset.modal.includes("updateMessage")) {
+            //get al elemento que se quiere editar de la base de datos
+            let id = event.target.parentNode.parentNode.dataset.idvermensaje;
+            console.log(id);
+            var result = await fetch(urlAPI + "mensajes/" + id, {
+                method: "GET",
+                headers: new Headers({
+                    "Authorization": "Bearer " + localStorage.token
+                })
+            });
+
+            if (result.ok) {
+                let json = await result.json();
+
+                let form = modal.querySelector("form");
+                if (plantillaMensaje) {
+                    form.children[1].children[1].innerText = usuarios.find(x => x.id == json.idEmisor).nombre;
+                }
+                else if (plantillaSent) {
+                    form.children[1].children[1].innerText = usuarios.find(x => x.id == json.idRemitente).nombre;
+                }
+                form.children[3].innerText = json.mensaje1;
+
+            }
+            else {
+                console.log(json);
+            }
+        }
+
         document.getElementById(event.target.dataset.modal).style.top = 0;
     }
     //si el data-set es cancel
@@ -229,15 +143,48 @@ document.addEventListener("click", function (event){
 
 });
 
+
+async function getMensajesEnviados() {
+    var result = await fetch(urlAPI + "mensajes/sent/" + localStorage.idUsuario, {
+        method: "GET",
+        headers: new Headers({
+            "Authorization": "Bearer " + localStorage.token
+        }),
+    });
+
+    //verificar resultado
+    if (result.ok) {
+        var mensajes = await result.json();
+        mostrarDatos(mensajes, "enviados");
+    }
+    else {
+        console.log(result);
+    }
+}
+
+async function getMensajesRecibidos() {
+    var result = await fetch(urlAPI + "mensajes/receive/" + localStorage.idUsuario, {
+        method: "GET",
+        headers: new Headers({
+            "Authorization": "Bearer " + localStorage.token
+        }),
+    });
+
+    //verificar resultado
+    if (result.ok) {
+        var mensajes = await result.json();
+        mostrarDatos(mensajes, "recibidos");
+    }
+    else {
+        console.log(result);
+    }
+}
+
 async function verMensaje(idMensaje) {
     var result = await fetch(urlAPI + "mensajes/"+idMensaje, {
         method: "GET",
-        mode: "cors",
         headers: new Headers({
-            "Authorization": "Bearer " + localStorage.token,
-            "Access-Control-Allow-Headers": "Content-Type",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "*"
+            "Authorization": "Bearer " + localStorage.token
         })
     });
 
@@ -259,6 +206,80 @@ async function verMensaje(idMensaje) {
         console.log(result);
     }
 }
+
+async function mostrarDatos(mensajes, tipoMensajes) {
+    //mostrarlos en vista con plantilla
+    let cantidad = mensajes.length;
+
+    if (cantidad > sectionMsj.children.length) {
+        let n = cantidad - sectionMsj.children.length
+        for (let x = 0; x < n; x++) { //si la cantidad  de datos es más grande de los ya existentes, sólo se agregan las plantillas que faltan
+            if (tipoMensajes == "recibidos") {
+                let clon = plantillaMensaje.content.children[0].cloneNode(true);
+                sectionMsj.append(clon); //agregar a la tabla
+            }
+            else {
+                if (plantillaSent) {
+                    let clon = plantillaSent.content.children[0].cloneNode(true);
+                    sectionMsj.append(clon); //agregar a la tabla
+                }
+            }
+        }
+
+    }
+    else if (cantidad < sectionMsj.children.length) { //si son menos, se eliminan las plantillas que sobran
+        let n = sectionMsj.children.length - cantidad
+        for (var x = 0; x < n; x++) {
+            sec.lastChild.remove();
+        }
+    }
+
+    //ya son iguales el num de plantillas y el num de datos, se llena con la info correcta actualizada
+    mensajes.forEach((o, i) => { //i:indice, o:objeto 
+        if (tipoMensajes == "recibidos") {
+            getDatos(o.idEmisor, o, i, tipoMensajes);
+        }
+        else {
+            getDatos(o.idRemitente, o, i, tipoMensajes);
+        }
+    });
+}
+
+async function getDatos(idUsuario, o, i, tipoMensaje) {
+    var result = await fetch(urlAPI + "usuarios/" + idUsuario);
+
+    if (result.ok) {
+        datosUsuario = await result.json();
+        //poner datos de usuario
+        let div = sectionMsj.children[i];
+        div.style.display = "block";
+
+        if (tipoMensaje == "recibidos") {
+            if (datosUsuario) {
+                div.children[0].innerText = "De: " + datosUsuario.nombre;
+            }
+            else {
+                div.children[0].innerText = "No se localizaron datos del usuario.";
+            }
+            div.children[1].innerText = "Mensaje: " + o.mensaje1;
+            const fecha = new Date(o.fecha);
+            div.children[2].innerText = fecha.toLocaleString();
+        }
+        else {
+            div.children[0].children[0].innerText = "Para: " + datosUsuario.nombre;
+            div.children[1].innerText = "Mensaje: " + o.mensaje1;
+            const fecha = new Date(o.fecha);
+            div.children[2].innerText = fecha.toLocaleString();
+        }
+        div.setAttribute("data-idVerMensaje", o.id);
+        var children = Array.from(div.children);
+        children.forEach(x => x.setAttribute("data-idVerMensaje", o.id));
+    }
+    else {
+        datosUsuario = null;
+    }
+}
+
 
 document.addEventListener("submit", async function (event) {
     //cancelar el evento submit
@@ -328,16 +349,16 @@ async function getUsuarios() {
 }
 
 function filtrar(parametro) {
+    let hoy = new Date();
+
     if (parametro == "hoy") {
-        let hoy = new Date();
-        let fechaHoy = `${hoy.getFullYear()}-${(hoy.getMonth() < 10 ? '0' : '').concat(hoy.getMonth() + 1)}-${(hoy.getDate() < 10 ? '0' : '').concat(hoy.getDate())}`;
-        let array;
+        let array = new Array();
 
         for (var i = 0; i < sectionMsj.children.length; i++) {
             let child = sectionMsj.children[i];
             //children 2 en recibidos y enviados  
-            if (child.children[2].innerText.includes(fechaHoy)){
-                array[i] = child;
+            if (child.children[2].innerText.includes(hoy.toLocaleDateString())) {
+                array.push(child);
             }
         }
         for (var i = 0; i < sectionMsj.children.length; i++) {
@@ -353,9 +374,33 @@ function filtrar(parametro) {
         }
     }
     else if (parametro == "ayer") {
+        let yesterday = new Date(hoy);
+        yesterday.setDate(yesterday.getDate() - 1);
+        console.log(yesterday.toLocaleDateString());
 
+        let array = new Array();
+
+        for (var i = 0; i < sectionMsj.children.length; i++) {
+            let child = sectionMsj.children[i];
+            //children 2 en recibidos y enviados  
+            if (child.children[2].innerText.includes(yesterday.toLocaleDateString())) {
+                array.push(child);
+            }
+        }
+        for (var i = 0; i < sectionMsj.children.length; i++) {
+            let child = sectionMsj.children[i];
+            if (i < array.length) {
+                //reemplazar renglones de la tabla por los filtrados
+                child == array[i];
+            }
+            else {
+                //ocultar renglones que no se necesitan
+                child.style.display = "none";
+            }
+        }
+          
     }
     else if (parametro == "todos") {
-
+        getMensajesRecibidos();
     }
 }
