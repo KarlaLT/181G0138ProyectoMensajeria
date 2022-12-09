@@ -5,12 +5,20 @@ const plantillaSent = document.getElementById("plantillaCRUD");
 const sectionMsj = document.querySelector(".messages");
 let datosUsuario;
 let usuarios;
+let grupos;
+let clases;
+let carreras; 
 
 //PÁGINA INDEX
 var usuario = document.getElementById("correo");
 var password = document.getElementById("password");
 var btnLogin = document.querySelector(".login a");
 
+navigator.serviceWorker.addEventListener("message", function (event) {
+    if (event.data.includes(urlAPI + "mensajes/")) {
+        mostrarDatos(event.data.data);
+    }
+});
 
 if (btnLogin) {
     btnLogin.addEventListener("click",  function () {
@@ -76,6 +84,15 @@ if (sectionMsj) {
     if (!usuarios) {
          getUsuarios();
     }
+    if (!grupos) {
+        getGrupos();
+    }
+    if (!clases) {
+        getClases();
+    }
+    if (!carreras) {
+        getCarreras();
+    }
     if (plantillaSent) {       
         getMensajesEnviados();
     }
@@ -115,9 +132,9 @@ document.addEventListener("click", async function (event){
                     form.children[1].children[1].innerText = usuarios.find(x => x.id == json.idEmisor).nombre;
                 }
                 else if (plantillaSent) {
-                    form.children[1].children[1].innerText = usuarios.find(x => x.id == json.idRemitente).nombre;
+                    form.elements["IdRemitente"].value = usuarios.find(x => x.id == json.idRemitente).nombre;
                 }
-                form.children[3].innerText = json.mensaje1;
+                form.elements["Mensaje"].innerText = json.mensaje1;
 
             }
             else {
@@ -300,11 +317,9 @@ document.addEventListener("submit", async function (event) {
         body: JSON.stringify(json),
         //SI la api te obliga a que le pongas JSON
         headers: {
-            "Access-Control-Allow-Headers": "Content-Type",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "*",
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': '*'
         },
         mode: "cors"
     });
@@ -320,16 +335,7 @@ document.addEventListener("submit", async function (event) {
 
 //llenar select de usuarios para seleccionar remitente
 async function getUsuarios() {
-    var result = await fetch(urlAPI + "usuarios", {
-        method: "GET",
-        headers: new Headers({
-            "Authorization": "Bearer " + localStorage.token,
-            "Access-Control-Allow-Headers": "Content-Type",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "*"
-        }),
-        mode: "cors"
-    });
+    var result = await fetch(urlAPI + "usuarios");
 
     if (result.ok) {
         usuarios = await result.json();
@@ -345,6 +351,66 @@ async function getUsuarios() {
                 })
             });
         }        
+    }
+}
+
+async function getGrupos() {
+    var result = await fetch(urlAPI + "usuarios/grupos");
+
+    if (result.ok) {
+        grupos = await result.json();
+        console.log(grupos);
+        //var selects = document.querySelectorAll("[name=IdRemitente]");
+        //if (selects) {
+        //    selects.forEach(select => {
+        //        usuarios.forEach(x => {
+        //            let option = document.createElement("OPTION");
+        //            option.innerText = x.nombre;
+        //            option.value = x.id;
+        //            select.options.add(option);
+        //        })
+        //    });
+        //}
+    }
+}
+
+async function getCarreras() {
+    var result = await fetch(urlAPI + "usuarios/carreras");
+
+    if (result.ok) {
+        carreras = await result.json();
+        console.log(carreras);
+        //var selects = document.querySelectorAll("[name=IdRemitente]");
+        //if (selects) {
+        //    selects.forEach(select => {
+        //        usuarios.forEach(x => {
+        //            let option = document.createElement("OPTION");
+        //            option.innerText = x.nombre;
+        //            option.value = x.id;
+        //            select.options.add(option);
+        //        })
+        //    });
+        //}
+    }
+}
+
+async function getClases() {
+    var result = await fetch(urlAPI + "usuarios/clases");
+
+    if (result.ok) {
+        clases = await result.json();
+        console.log(clases);
+        //var selects = document.querySelectorAll("[name=IdRemitente]");
+        //if (selects) {
+        //    selects.forEach(select => {
+        //        usuarios.forEach(x => {
+        //            let option = document.createElement("OPTION");
+        //            option.innerText = x.nombre;
+        //            option.value = x.id;
+        //            select.options.add(option);
+        //        })
+        //    });
+        //}
     }
 }
 
@@ -403,4 +469,4 @@ function filtrar(parametro) {
     else if (parametro == "todos") {
         getMensajesRecibidos();
     }
-}
+} //funcional

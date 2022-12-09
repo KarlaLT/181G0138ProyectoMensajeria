@@ -1,5 +1,24 @@
-﻿self.addEventListener("fetch", function (event) {
+﻿const urlAPI = "https://mensajeriatecnm.itesrc.net/api/";
+
+self.addEventListener("fetch", function (event) {
     event.respondWith(verificar(event)); //verificar si la solicitud se tiene ya guardada en caché o si es nueva para guardarla en cahcé
+});
+
+
+self.addEventListener("install", function () {
+    var db = indexedDB.open("mensajesDB", 1);  //no utiliza promises ni async, utiliza callbacks
+
+    db.onupgradeneeded = function () {
+        //object store para guardar cambios en bd(post, put, delete)
+        db.result.createObjectStore("peticiones", {
+            autoIncrement: true
+        });
+        //object store para requests que se hicieron cuando no se estaba online
+        db.result.createObjectStore("cambios", {
+            keyPath: "fecha"
+        });
+    };
+
 });
 
 async function verificar(event) { //CACHE FIRST
@@ -15,7 +34,7 @@ async function verificar(event) { //CACHE FIRST
             let clientid = event.clientid; //identificador de la pestaña del navegador (para saber qué pestaña se tiene que actualizar)
 
             revalidar(exist.clone(), clientid); //guardada está STALE
-            exist = await cache.match(event.request);
+           // exist = await cache.match(event.request);
             return exist;
         }
         else {
@@ -25,12 +44,18 @@ async function verificar(event) { //CACHE FIRST
             return result;
         }
     }
+    else if (event.request.url.includes("/api/")) { //es solicitud post
+        if (navigator.onLine) {
+            return await fetch(event.request);
+        }
+        else {
+            guardarRequest(event.request.clone());
+        }
+    }
     else {
         return await fetch(event.request);
     }
 }
-
-
 
 async function revalidar(request, clientid) {
     let result = await fetch(request.url); //se hace de nuevo la petición a la dirección del request solicitdado
@@ -45,14 +70,6 @@ async function revalidar(request, clientid) {
             let cache = await caches.open("cacheAPI"); //abrimos cache
             await cache.put(result.url, clon); //se guarda en cache la información que el request regresa
 
-            
-            ////AVISAR DEL CAMBIO AL CLIENTE POR MEDIO DE SERVICE WORKER
-            //let ventana = await clients.get(clientid);
-
-            //ventana.postMessage({
-            //    url: request.url,
-            //    data: JSON.parse(text)
-            //});
         }
         //si son iguales no se hace nada, lo guardado en cache se queda igual a como estaba
     }

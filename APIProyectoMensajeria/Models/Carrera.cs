@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace APIProyectoMensajeria.Models
 {
@@ -13,6 +14,7 @@ namespace APIProyectoMensajeria.Models
         public int Id { get; set; }
         public string Nombre { get; set; } = null!;
 
+        [JsonIgnore]
         public virtual ICollection<Grupo> Grupos { get; set; }
     }
 }

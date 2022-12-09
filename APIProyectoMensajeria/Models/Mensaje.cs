@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace APIProyectoMensajeria.Models
 {
@@ -11,7 +12,11 @@ namespace APIProyectoMensajeria.Models
         public int? IdRemitente { get; set; }
         public DateTime Fecha { get; set; }
 
+        [JsonIgnore]
+
         public virtual Usuario? IdEmisorNavigation { get; set; }
+        [JsonIgnore]
+
         public virtual Usuario? IdRemitenteNavigation { get; set; }
     }
 }

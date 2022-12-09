@@ -275,5 +275,29 @@ namespace APIProyectoMensajeria.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        //GRUPOS
+        [HttpGet("grupos")]
+        public IActionResult GetGrupos()
+        {
+            var grupos = Context.Set<Grupo>().ToList();
+            return Ok(grupos);
+        }
+
+        //CLASES
+        [HttpGet("clases")]
+        public IActionResult GetClases()
+        {
+            var clases = Context.Set<Clase>().ToList();
+            return Ok(clases);
+        }
+
+        //CARRERAS
+        [HttpGet("carreras")]
+        public IActionResult GetCarreras()
+        {
+            var carreras = Context.Set<Carrera>().ToList();
+            return Ok(carreras);
+        }
     }
 }
