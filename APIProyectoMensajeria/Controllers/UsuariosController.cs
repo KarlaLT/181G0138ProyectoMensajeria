@@ -16,15 +16,17 @@ namespace APIProyectoMensajeria.Controllers
     [ApiController]
     public class UsuariosController : ControllerBase
     {
-        static itesrcne_mensajeriakarlaContext Context = new();
-        static Repositories.Repository<Usuario> reposUsuarios = new(Context);
+        private itesrcne_mensajeriakarlaContext Context = new();
+         Repositories.Repository<Usuario> reposUsuarios ;
 
         //Para traernos lo que tenemos en la configuracion del Jwt
         public IConfiguration Configuration { get; }
 
-        public UsuariosController(IConfiguration config)
+        public UsuariosController(IConfiguration config, itesrcne_mensajeriakarlaContext context)
         {
+            Context=context;
             Configuration = config;
+            reposUsuarios=new(context);
         }
 
         //LOGIN

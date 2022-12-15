@@ -11,9 +11,13 @@ namespace APIProyectoMensajeria.Controllers
     //[Authorize]
     public class MensajesController : ControllerBase
     {
-        static itesrcne_mensajeriakarlaContext Context = new();
-        static Repositories.Repository<Mensaje> reposMensajes = new(Context);
-
+        private itesrcne_mensajeriakarlaContext Context = new();
+        Repositories.Repository<Mensaje> reposMensajes;
+        public MensajesController(  itesrcne_mensajeriakarlaContext context)
+        {
+            Context = context;
+            reposMensajes = new(context);
+        }
         //TRAER LOS MENSAJES QUE UN USUARIO RECIBE (POR ID REMITENTE)
         [HttpGet("receive/{idRemitente}")]
         public IActionResult GetByRemitente(int idRemitente)

@@ -107,9 +107,9 @@
 
     <div class="modal" id="deleteMessage">
 
-        <form>
+        <form data-action="Mensajes" data-modal="deleteMessage">
             <h4>Confirmar</h4>
-
+                         <input type="hidden" name="IdMensaje"/>
             <label>¿Seguro que desea eliminar el mensaje seleccionado?</label>
 
             <div>
@@ -122,9 +122,10 @@
 
     <div class="modal" id="updateMessage">
 
-        <form>
+        <form data-action="Mensajes" data-modal="updateMessage">
             <h4>Detalles del mensaje</h4>
-
+            <input type="hidden" name="IdRemitenteHidden"/>
+             <input type="hidden" name="IdMensaje"/>
           <div>
                 <input type="text" name="IdRemitente" readonly />
             </div>
@@ -134,7 +135,7 @@
             <textarea name="Mensaje"> </textarea>
 
             <div>
-                <input type="submit" value="Guardar y enviar" />
+                <input  type="submit" value="Guardar y enviar" />
                 <a data-cancel="1">X Cerrar</a>
             </div>
 

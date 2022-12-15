@@ -133,6 +133,8 @@ document.addEventListener("click", async function (event){
                 }
                 else if (plantillaSent) {
                     form.elements["IdRemitente"].value = usuarios.find(x => x.id == json.idRemitente).nombre;
+                    form.elements["IdRemitenteHidden"].value = json.idRemitente;
+                    form.elements["IdMensaje"].value = json.id;
                 }
                 form.elements["Mensaje"].innerText = json.mensaje1;
 
@@ -140,6 +142,13 @@ document.addEventListener("click", async function (event){
             else {
                 console.log(json);
             }
+        }
+        if (event.target.dataset.modal.includes("deleteMessage")) {
+            let id = event.target.parentNode.parentNode.dataset.idvermensaje;
+            console.log(id);
+
+            let form = modal.querySelector("form");
+            form.elements["IdMensaje"].value = id;
         }
 
         document.getElementById(event.target.dataset.modal).style.top = 0;
@@ -303,33 +312,69 @@ document.addEventListener("submit", async function (event) {
     event.preventDefault();
 
     let form = event.target;
-    //FormData estan todos los names que tiene el formulario
-    let json = {
-        idEmisor: localStorage.idUsuario,
-        idRemitente: form.children[1].children[1].value,
-        mensaje1: form.children[3].value
-    };
+    let json;
+    let request;
 
-    //Hacemos un fetch a la API y para hacer por POST debemos pasar el RequestInfo y eso va en las llavesitas
-    let request = new Request(urlAPI + form.dataset.action, {
-        method: form.method,
-        //El cuerpo siempre debe ser string no permite enviar un json.
-        body: JSON.stringify(json),
-        //SI la api te obliga a que le pongas JSON
-        headers: {
-            'Content-type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': '*'
-        },
-        mode: "cors"
-    });
+    //FormData estan todos los names que tiene el formulario
+    if (event.target.dataset.modal == "updateMessage") {
+        json = {
+            Id: form.elements["IdMensaje"].value,
+            IdEmisor: localStorage.idUsuario,
+            IdRemitente: form.elements["IdRemitenteHidden"].value,
+            Mensaje1: form.children[5].value
+        };
+
+        //Hacemos un fetch a la API y para hacer por POST debemos pasar el RequestInfo y eso va en las llavesitas
+        request = new Request(urlAPI + form.dataset.action, {
+            method: "PUT",
+            //El cuerpo siempre debe ser string no permite enviar un json.
+            body: JSON.stringify(json),
+            //SI la api te obliga a que le pongas JSON
+            headers: {
+                'Content-type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': '*'
+            },
+            mode: "cors"
+        });
+    }
+    else if (event.target.dataset.modal == "deleteMessage") {
+        request = new Request(urlAPI + form.dataset.action + "/" + form.elements["IdMensaje"].value, {
+            method: "DELETE",
+            mode: "cors"
+        });
+    }
+    else {
+        json = {
+            idEmisor: localStorage.idUsuario,
+            idRemitente: form.children[1].children[1].value,
+            mensaje1: form.children[3].value
+        };
+
+        //Hacemos un fetch a la API y para hacer por POST debemos pasar el RequestInfo y eso va en las llavesitas
+        request = new Request(urlAPI + form.dataset.action, {
+            method: form.method,
+            //El cuerpo siempre debe ser string no permite enviar un json.
+            body: JSON.stringify(json),
+            //SI la api te obliga a que le pongas JSON
+            headers: {
+                'Content-type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': '*'
+            },
+            mode: "cors"
+        });
+    }
+   
+    
 
     var result = await fetch(request);
     if (result.ok) {
         window.location.reload();
     }
     else {
-        console.log(result);
+        let error = await result.json();
+        console.log(error);
     }
 });
 
@@ -343,12 +388,14 @@ async function getUsuarios() {
         var selects = document.querySelectorAll("[name=IdRemitente]");
         if (selects) {
             selects.forEach(select => {
-                usuarios.forEach(x => {
-                    let option = document.createElement("OPTION");
-                    option.innerText = x.nombre;
-                    option.value = x.id;
-                    select.options.add(option);
-                })
+                if (select.nodeName == "SELECT") {
+                    usuarios.forEach(x => {
+                        let option = document.createElement("OPTION");
+                        option.innerText = x.nombre;
+                        option.value = x.id;
+                        select.options.add(option);
+                    })
+                }                
             });
         }        
     }
