@@ -13,6 +13,9 @@ let carreras;
 var usuario = document.getElementById("correo");
 var password = document.getElementById("password");
 var btnLogin = document.querySelector(".login a");
+var divUsuarios = document.querySelector("#usuarios");
+var divChckUsuarios = document.querySelector("#chckUsuarios");
+var radios = document.querySelectorAll('input[type=radio][name="usuarios"]');
 
 navigator.serviceWorker.addEventListener("message", function (event) {
     if (event.data.includes(urlAPI + "mensajes/")) {
@@ -101,6 +104,79 @@ if (sectionMsj) {
     }
 }
 
+if (radios) {
+    radios.forEach(radio => radio.addEventListener('change', function () {
+        console.log(radio.value);
+
+        if (radio.value == "usuarios") {   
+            while (divChckUsuarios.hasChildNodes()) {
+                divChckUsuarios.removeChild(divChckUsuarios.firstChild);
+            }
+
+            usuarios.forEach(x => {
+                console.log(x)
+                let chk = document.createElement("INPUT");
+                chk.setAttribute("type", "checkbox");
+                chk.value = x.id;
+                let label = document.createElement("LABEL");
+                label.innerText = x.nombre;
+
+                divChckUsuarios.append(chk, label);
+            });
+        }
+        else if (radio.value == "clases") {
+            while (divChckUsuarios.hasChildNodes()) {
+                divChckUsuarios.removeChild(divChckUsuarios.firstChild);
+            }
+
+            clases.forEach(x => {
+                console.log(x)
+                let chk = document.createElement("INPUT");
+                chk.setAttribute("type", "checkbox");
+                chk.value = x.id;
+                let label = document.createElement("LABEL");
+                label.innerText = x.nombre;
+
+                divChckUsuarios.append(chk, label);
+            });
+        }
+        else if (radio.value == "grupos") {
+            while (divChckUsuarios.hasChildNodes()) {
+                divChckUsuarios.removeChild(divChckUsuarios.firstChild);
+            }
+
+            grupos.forEach(x => {
+                console.log(x)
+                let chk = document.createElement("INPUT");
+                chk.setAttribute("type", "checkbox");
+                chk.value = x.id;
+                let label = document.createElement("LABEL");
+                label.innerText = x.clave;
+
+                label.append(chk);
+                divChckUsuarios.append(label);
+            });
+        }
+        else {
+            while (divChckUsuarios.hasChildNodes()) {
+                divChckUsuarios.removeChild(divChckUsuarios.firstChild);
+            }
+
+            carreras.forEach(x => {
+                console.log(x)
+                let chk = document.createElement("INPUT");
+                chk.setAttribute("type", "checkbox");
+                chk.value = x.id;
+                let label = document.createElement("LABEL");
+                label.innerText = x.nombre;
+
+                divChckUsuarios.append(chk, label);
+            });
+        }
+
+    }));
+}
+
 document.addEventListener("click", async function (event){
     if (event.target.dataset.logout) {
         //cerrar sésión
@@ -168,7 +244,6 @@ document.addEventListener("click", async function (event){
     }
 
 });
-
 
 async function getMensajesEnviados() {
     var result = await fetch(urlAPI + "mensajes/sent/" + localStorage.idUsuario, {
@@ -345,17 +420,78 @@ document.addEventListener("submit", async function (event) {
         });
     }
     else {
+        var tipoRemitente = document.querySelector('input[name="usuarios"]:checked').value;
+        let arrayUsuarios = new Array();
+        let seleccionados = document.querySelectorAll("input[type=checkbox]:checked");
+
+        if (tipoRemitente == "usuarios") {           
+            seleccionados.forEach(x => {
+                let value = x.value;
+                let user = usuarios.find(k => k.id == value);
+                arrayUsuarios.push(user);
+            });
+        }
+        else if (tipoRemitente == "clases") {
+            //traer lista de usuarios de las clases seleccionadas
+            seleccionados.forEach(x => {
+                let value = x.value;
+
+                (async () => {
+                    var result = await fetch(urlAPI + "usuarios/class/" + value);
+
+                    if (result.ok) {
+                        let res = await result.json();
+                        res.forEach(x => arrayUsuarios.push(x));
+                    }
+                })();                
+            });
+        }
+        else if (tipoRemitente == "grupos") {
+            //traer lista de usuarios de las clases seleccionadas
+            seleccionados.forEach(x => {
+                let value = x.value;
+
+                (async () => {
+                    var result = await fetch(urlAPI + "usuarios/group/" + value);
+
+                    if (result.ok) {
+                        let res = await result.json();
+                        res.forEach(x => arrayUsuarios.push(x));
+                    }
+                })();
+            });
+        }
+        else if (tipoRemitente == "carreras") {
+            //traer lista de usuarios de las clases seleccionadas
+            seleccionados.forEach(x => {
+                let value = x.value;
+
+                (async () => {
+                    var result = await fetch(urlAPI + "usuarios/career/" + value);
+
+                    if (result.ok) {
+                        let res = await result.json();
+                        res.forEach(x => arrayUsuarios.push(x));
+                    }
+                })();
+            });
+        }
+
         json = {
             idEmisor: localStorage.idUsuario,
-            idRemitente: form.children[1].children[1].value,
             mensaje1: form.children[3].value
         };
 
+        let jsonMensajeLista = {
+            mensaje: json,
+            usuarios: arrayUsuarios
+        };
+
         //Hacemos un fetch a la API y para hacer por POST debemos pasar el RequestInfo y eso va en las llavesitas
-        request = new Request(urlAPI + form.dataset.action, {
+        request = new Request(urlAPI + form.dataset.action +"/toUsers", {
             method: form.method,
             //El cuerpo siempre debe ser string no permite enviar un json.
-            body: JSON.stringify(json),
+            body: JSON.stringify(jsonMensajeLista),
             //SI la api te obliga a que le pongas JSON
             headers: {
                 'Content-type': 'application/json',
@@ -365,8 +501,6 @@ document.addEventListener("submit", async function (event) {
             mode: "cors"
         });
     }
-   
-    
 
     var result = await fetch(request);
     if (result.ok) {

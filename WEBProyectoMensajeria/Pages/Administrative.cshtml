@@ -38,13 +38,6 @@
             </div>
 
 
-            <div>
-                <p>Grupo:</p>
-                <select>
-                    <option>9.1G</option>
-                    <option>7.2G</option>
-                </select>
-            </div>
         </div>
 
 
@@ -71,6 +64,23 @@
 
             <div>
                 <label>Para:</label>
+
+                <div id="usuarios">
+                    <input value="usuarios" type="radio" id="usuario" name="usuarios" />
+                    <label for="usuario">1 usuario</label>
+
+                     <input value="clases" type="radio" id="clase" name="usuarios" />
+                    <label for="clase">Clase</label>
+
+                     <input value="grupos" type="radio" id="grupo" name="usuarios" />
+                    <label for="grupo">Grupo</label>
+
+                     <input value="carreras" type="radio" id="carrera" name="usuarios" />
+                    <label for="carrera">Carrera</label>
+                </div>
+                <div id="chckUsuarios">
+
+                </div>
                 <select name="IdRemitente">
                 </select>
             </div>
@@ -89,7 +99,8 @@
     <div class="modal" id="seleccionarUsuarios">
         <form>
             <h4>Seleccione 1 ó más remitentes</h4>
-
+            <input type="checkbox" />
+            <label>9.1G</label>
         </form>
     </div>
 
