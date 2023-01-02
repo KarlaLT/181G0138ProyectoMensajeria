@@ -263,7 +263,7 @@ footer div {
 
     .modal form {
         width: 40%;
-        height: 50%;
+        height: 70%;
         position: absolute;
         top: 0;
         left: 0;
@@ -354,6 +354,22 @@ footer div {
     padding: 0;
     display: flex;
 }
+
+#usuarios label {
+    font-size: .7em;
+}
+
+#chckUsuarios label {
+    font-size: .5em;
+}
+
+#chckUsuarios {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    height: 50%;
+    overflow-y: scroll;
+}
+
 
 /*RESPONSIVE*/
 @media screen and (max-width: 560px) and (max-height:940px) {

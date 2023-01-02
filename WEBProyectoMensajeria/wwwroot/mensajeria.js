@@ -114,14 +114,15 @@ if (radios) {
             }
 
             usuarios.forEach(x => {
-                console.log(x)
+                let section = document.createElement("SECTION");
                 let chk = document.createElement("INPUT");
                 chk.setAttribute("type", "checkbox");
                 chk.value = x.id;
                 let label = document.createElement("LABEL");
                 label.innerText = x.nombre;
 
-                divChckUsuarios.append(chk, label);
+                section.append(chk, label);
+                divChckUsuarios.append(section);
             });
         }
         else if (radio.value == "clases") {
@@ -130,14 +131,16 @@ if (radios) {
             }
 
             clases.forEach(x => {
-                console.log(x)
+                                let section = document.createElement("SECTION");
+
                 let chk = document.createElement("INPUT");
                 chk.setAttribute("type", "checkbox");
                 chk.value = x.id;
                 let label = document.createElement("LABEL");
                 label.innerText = x.nombre;
 
-                divChckUsuarios.append(chk, label);
+                section.append(chk, label);
+                divChckUsuarios.append(section);
             });
         }
         else if (radio.value == "grupos") {
@@ -146,15 +149,16 @@ if (radios) {
             }
 
             grupos.forEach(x => {
-                console.log(x)
+                let section = document.createElement("SECTION");
+
                 let chk = document.createElement("INPUT");
                 chk.setAttribute("type", "checkbox");
                 chk.value = x.id;
                 let label = document.createElement("LABEL");
                 label.innerText = x.clave;
 
-                label.append(chk);
-                divChckUsuarios.append(label);
+                section.append(chk, label);
+                divChckUsuarios.append(section);
             });
         }
         else {
@@ -163,14 +167,16 @@ if (radios) {
             }
 
             carreras.forEach(x => {
-                console.log(x)
+                let section = document.createElement("SECTION");
+
                 let chk = document.createElement("INPUT");
                 chk.setAttribute("type", "checkbox");
                 chk.value = x.id;
                 let label = document.createElement("LABEL");
                 label.innerText = x.nombre;
 
-                divChckUsuarios.append(chk, label);
+                section.append(chk, label);
+                divChckUsuarios.append(section);
             });
         }
 
@@ -362,13 +368,13 @@ async function getDatos(idUsuario, o, i, tipoMensaje) {
             else {
                 div.children[0].innerText = "No se localizaron datos del usuario.";
             }
-            div.children[1].innerText = "Mensaje: " + o.mensaje1;
+            div.children[1].innerText =  o.mensaje1;
             const fecha = new Date(o.fecha);
             div.children[2].innerText = fecha.toLocaleString();
         }
         else {
             div.children[0].children[0].innerText = "Para: " + datosUsuario.nombre;
-            div.children[1].innerText = "Mensaje: " + o.mensaje1;
+            div.children[1].innerText =  o.mensaje1;
             const fecha = new Date(o.fecha);
             div.children[2].innerText = fecha.toLocaleString();
         }
@@ -423,94 +429,132 @@ document.addEventListener("submit", async function (event) {
         var tipoRemitente = document.querySelector('input[name="usuarios"]:checked').value;
         let arrayUsuarios = new Array();
         let seleccionados = document.querySelectorAll("input[type=checkbox]:checked");
-
-        if (tipoRemitente == "usuarios") {           
-            seleccionados.forEach(x => {
-                let value = x.value;
-                let user = usuarios.find(k => k.id == value);
-                arrayUsuarios.push(user);
-            });
-        }
-        else if (tipoRemitente == "clases") {
-            //traer lista de usuarios de las clases seleccionadas
-            seleccionados.forEach(x => {
-                let value = x.value;
-
-                (async () => {
-                    var result = await fetch(urlAPI + "usuarios/class/" + value);
-
-                    if (result.ok) {
-                        let res = await result.json();
-                        res.forEach(x => arrayUsuarios.push(x));
-                    }
-                })();                
-            });
-        }
-        else if (tipoRemitente == "grupos") {
-            //traer lista de usuarios de las clases seleccionadas
-            seleccionados.forEach(x => {
-                let value = x.value;
-
-                (async () => {
-                    var result = await fetch(urlAPI + "usuarios/group/" + value);
-
-                    if (result.ok) {
-                        let res = await result.json();
-                        res.forEach(x => arrayUsuarios.push(x));
-                    }
-                })();
-            });
-        }
-        else if (tipoRemitente == "carreras") {
-            //traer lista de usuarios de las clases seleccionadas
-            seleccionados.forEach(x => {
-                let value = x.value;
-
-                (async () => {
-                    var result = await fetch(urlAPI + "usuarios/career/" + value);
-
-                    if (result.ok) {
-                        let res = await result.json();
-                        res.forEach(x => arrayUsuarios.push(x));
-                    }
-                })();
-            });
-        }
+        var listaCarreras = new Array();
+        var listaClases = new Array();
+        var listaGrupos = new Array();
 
         json = {
             idEmisor: localStorage.idUsuario,
             mensaje1: form.children[3].value
         };
 
-        let jsonMensajeLista = {
-            mensaje: json,
-            usuarios: arrayUsuarios
-        };
+        if (tipoRemitente == "usuarios") {           
+            seleccionados.forEach(x => {
+                let value = x.value;
+                let user = usuarios.find(k => k.id == value);
+                arrayUsuarios.push(user.id);
+            });
 
-        //Hacemos un fetch a la API y para hacer por POST debemos pasar el RequestInfo y eso va en las llavesitas
-        request = new Request(urlAPI + form.dataset.action +"/toUsers", {
-            method: form.method,
-            //El cuerpo siempre debe ser string no permite enviar un json.
-            body: JSON.stringify(jsonMensajeLista),
-            //SI la api te obliga a que le pongas JSON
-            headers: {
-                'Content-type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': '*'
-            },
-            mode: "cors"
-        });
+            let jsonMensajeLista = {
+                mensaje: json,
+                usuarios: arrayUsuarios
+            };
+
+            //Hacemos un fetch a la API y para hacer por POST debemos pasar el RequestInfo y eso va en las llavesitas
+            request = new Request(urlAPI + form.dataset.action + "/toUsers", {
+                method: form.method,
+                //El cuerpo siempre debe ser string no permite enviar un json.
+                body: JSON.stringify(jsonMensajeLista),
+                //SI la api te obliga a que le pongas JSON
+                headers: {
+                    'Content-type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': '*'
+                },
+                mode: "cors"
+            });
+        }
+        else if (tipoRemitente == "clases") {
+            //traer lista de usuarios de las clases seleccionadas
+            seleccionados.forEach(x => {
+                let value = x.value;
+                listaClases.push(value);               
+            });
+
+            let jsonMensajeLista = {
+                mensaje: json,
+                usuarios: listaClases
+            };
+
+            //Hacemos un fetch a la API y para hacer por POST debemos pasar el RequestInfo y eso va en las llavesitas
+            request = new Request(urlAPI + form.dataset.action + "/toClases", {
+                method: form.method,
+                //El cuerpo siempre debe ser string no permite enviar un json.
+                body: JSON.stringify(jsonMensajeLista),
+                //SI la api te obliga a que le pongas JSON
+                headers: {
+                    'Content-type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': '*'
+                },
+                mode: "cors"
+            });
+        }
+        else if (tipoRemitente == "grupos") {
+            //traer lista de usuarios de las clases seleccionadas
+            seleccionados.forEach(x => {
+                let value = x.value;
+                listaGrupos.push(value);
+            });
+
+            let jsonMensajeLista = {
+                mensaje: json,
+                usuarios: listaGrupos
+            };
+
+            //Hacemos un fetch a la API y para hacer por POST debemos pasar el RequestInfo y eso va en las llavesitas
+            request = new Request(urlAPI + form.dataset.action + "/toGrupos", {
+                method: form.method,
+                //El cuerpo siempre debe ser string no permite enviar un json.
+                body: JSON.stringify(jsonMensajeLista),
+                //SI la api te obliga a que le pongas JSON
+                headers: {
+                    'Content-type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': '*'
+                },
+                mode: "cors"
+            });
+        }
+        else if (tipoRemitente == "carreras") {
+            //traer lista de usuarios de las clases seleccionadas
+            seleccionados.forEach(x => {
+                let value = x.value;
+                listaCarreras.push(value);
+            });
+
+            let jsonMensajeLista = {
+                mensaje: json,
+                usuarios: listaCarreras
+            };
+
+            //Hacemos un fetch a la API y para hacer por POST debemos pasar el RequestInfo y eso va en las llavesitas
+            request = new Request(urlAPI + form.dataset.action + "/toCarreras", {
+                method: form.method,
+                //El cuerpo siempre debe ser string no permite enviar un json.
+                body: JSON.stringify(jsonMensajeLista),
+                //SI la api te obliga a que le pongas JSON
+                headers: {
+                    'Content-type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': '*'
+                },
+                mode: "cors"
+            });
+        }
     }
 
     var result = await fetch(request);
     if (result.ok) {
-        window.location.reload();
+         window.location.reload();
+      // getMensajesEnviados();
     }
     else {
         let error = await result.json();
         console.log(error);
     }
 });
+
 
 //llenar select de usuarios para seleccionar remitente
 async function getUsuarios() {
@@ -540,7 +584,6 @@ async function getGrupos() {
 
     if (result.ok) {
         grupos = await result.json();
-        console.log(grupos);
         //var selects = document.querySelectorAll("[name=IdRemitente]");
         //if (selects) {
         //    selects.forEach(select => {
@@ -560,7 +603,6 @@ async function getCarreras() {
 
     if (result.ok) {
         carreras = await result.json();
-        console.log(carreras);
         //var selects = document.querySelectorAll("[name=IdRemitente]");
         //if (selects) {
         //    selects.forEach(select => {
@@ -580,7 +622,6 @@ async function getClases() {
 
     if (result.ok) {
         clases = await result.json();
-        console.log(clases);
         //var selects = document.querySelectorAll("[name=IdRemitente]");
         //if (selects) {
         //    selects.forEach(select => {

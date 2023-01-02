@@ -1,5 +1,14 @@
 ﻿const urlAPI = "https://mensajeriatecnm.itesrc.net/api/";
 
+self.addEventListener("activate", function () {
+    setInterval(function () {
+        if (navigator.onLine) {
+            reenviarRequestGuardadas();
+        }
+    }, 3600);
+});
+
+
 self.addEventListener("fetch", function (event) {
     event.respondWith(verificar(event)); //verificar si la solicitud se tiene ya guardada en caché o si es nueva para guardarla en cahcé
 });
@@ -21,41 +30,39 @@ self.addEventListener("install", function () {
 
 });
 
+
 async function verificar(event) { //CACHE FIRST
 
-    if (event.request.url.includes("/api/") && event.request.method == "GET") { //es solicitud a api
+    if (event.request.url.includes("/api/")) { //es solicitud a api
+        if (event.request.method == "GET") {
+            let exist = await caches.match(event.request);
 
-        //abrir cache y guardar
-        let cache = await caches.open("cacheAPI");
-        let exist = await cache.match(event.request);
+            if (exist) {
+                //revalidar
+                let clientid = event.clientid; //identificador de la pestaña del navegador (para saber qué pestaña se tiene que actualizar)
+                revalidar(exist.clone(), clientid); //guardada está STALE
 
-        if (exist) {
-            //revalidar
-            let clientid = event.clientid; //identificador de la pestaña del navegador (para saber qué pestaña se tiene que actualizar)
-
-            revalidar(exist.clone(), clientid); //guardada está STALE
-           // exist = await cache.match(event.request);
-            return exist;
+                return exist;
+            }
+            else {
+                return cacheFirst(event.request);
+            }
         }
         else {
-            //guardarla y regresar lo que guardaste
-            let result = await fetch(event.request);
-            await cache.put(event.request, result.clone()); //el resultado se clona para que no se cierre y poder regresarlo enla sig instrucción
-            return result;
-        }
-    }
-    else if (event.request.url.includes("/api/")) { //es solicitud post
-        if (navigator.onLine) {
-            return await fetch(event.request);
-        }
-        else {
-            guardarRequest(event.request.clone());
+            if (navigator.onLine) {
+                return fetch(event.request);
+            }
+            else {
+                guardarRequest(event.request.clone()); //guardar request en indexedDB mientras se logra enviar
+                return new Response(null, { status: 200 });
+            }
         }
     }
     else {
-        return await fetch(event.request);
+        return cacheFirst(event.request);
     }
 }
+
 
 async function revalidar(request, clientid) {
     let result = await fetch(request.url); //se hace de nuevo la petición a la dirección del request solicitdado
@@ -73,4 +80,66 @@ async function revalidar(request, clientid) {
         }
         //si son iguales no se hace nada, lo guardado en cache se queda igual a como estaba
     }
+}
+
+
+async function cacheFirst(request) {
+    caches.match(request).then((cacheResponse) => {
+        return cacheResponse || fetch(request).then((networkResponse) => {
+            return caches.open(currentCache).then((cache) => {
+                cache.put(request, networkResponse.clone());
+                return networkResponse;
+            })
+        })
+    })
+};
+
+
+async function guardarRequest(request) {
+    let myRequest = {
+        url: request.url,
+        method: request.method,
+        body: await request.json()
+    };
+
+    var response = indexedDB.open("mensajesDB");
+
+    response.onsuccess = function (event) {
+        var db = event.target.result;
+        var transaction = db.transaction('peticiones', 'readwrite');
+        var os = transaction.objectStore('peticiones');
+        os.add(myRequest)
+    }
+}
+
+
+async function reenviarRequestGuardadas() {
+    var response = indexedDB.open("mensajesDB");
+
+    response.onsuccess = function (event) {
+        var db = event.target.result;
+        var transaccion = db.transaction('peticiones', 'readwrite');
+        var res = transaccion.objectStore('peticiones').getAll();
+
+        res.onsuccess = async function () {
+            let peticion = res.result;
+
+            for (var i = 0; i < peticion.length; i++) {
+
+                let response = await fetch(peticion[i].url, {
+                    method: peticion[i].method,
+                    body: JSON.stringify(peticion[i].body),
+                    headers: {
+                        "content-type": "application/json"
+                    }
+                });
+
+                if (response.ok) {
+                    var transaccion = db.transaction('peticiones', 'readwrite');
+                    transaccion.objectStore('peticiones').delete(peticion[i]);
+                    i--;
+                }
+            }
+        };
+    };
 }
