@@ -85,7 +85,8 @@
                 </div>
             <label>Mensaje:</label>
 
-            <textarea name="Mensaje1"> </textarea>
+            <textarea required name="Mensaje1"> </textarea>
+                        <p class="error" ></p>
 
             <div>
                 <input type="submit" value="Enviar" />
@@ -95,7 +96,7 @@
 
     </div>
 
-    <div class="modal" id="seeMessage">
+    <div class="modal modalVerMensaje" id="seeMessage">
 
         <form>
             <h4>Detalles del mensaje</h4>
@@ -118,12 +119,13 @@
 
     </div>
 
-    <div class="modal" id="deleteMessage">
+    <div class="modal modalDelete" id="deleteMessage">
 
         <form data-action="Mensajes" data-modal="deleteMessage">
             <h4>Confirmar</h4>
                          <input type="hidden" name="IdMensaje"/>
             <label>¿Seguro que desea eliminar el mensaje seleccionado?</label>
+                        <p class="error" ></p>
 
             <div>
                 <input type="submit" value="Eliminar" />
@@ -133,19 +135,20 @@
 
     </div>
 
-    <div class="modal" id="updateMessage">
+    <div class="modal modalUpdate" id="updateMessage">
 
         <form data-action="Mensajes" data-modal="updateMessage">
             <h4>Detalles del mensaje</h4>
             <input type="hidden" name="IdRemitenteHidden"/>
              <input type="hidden" name="IdMensaje"/>
           <div>
-                <input type="text" name="IdRemitente" readonly />
+                <input  type="text" name="IdRemitente" readonly />
             </div>
 
             <label>Mensaje:</label>
 
-            <textarea name="Mensaje"> </textarea>
+            <textarea required name="Mensaje"> </textarea>
+                        <p class="error" ></p>
 
             <div>
                 <input  type="submit" value="Guardar y enviar" />
@@ -159,19 +162,10 @@
 
     <script src="~/mensajeria.js"></script>
     <script>
-        //var modal = document.querySelector(".modal");
-        //var btnFlotante = document.querySelector(".btn-flotante");
+      
         var options = document.querySelector("header div img");
         var menu = document.querySelector(".options");
-            //var modalMessage = document.querySelector(".seeMessage");
-            //var modalUpdate= document.querySelector(".updateMessage");
-            //        var modalDelete= document.querySelector(".deleteMessage");
-
-
-        //btnFlotante.addEventListener("click", function(){
-        //    modal.style.top=0;
-        //});
-
+    
         options.addEventListener("click", function(){
             if(menu.style.display!="block"){
                         menu.style.display="block";
@@ -180,21 +174,6 @@
                         menu.style.display="none";
             }
         });
-
-        // var message = document.querySelector(".messages div");
-
-        //message.addEventListener("click", function(e){
-        //    if(e.target.className=="edit"){
-        //        modalUpdate.style.top=0;
-        //    }
-        //    else if(e.target.className=="delete"){
-        //        modalDelete.style.top=0;
-        //    }
-        //    else{
-        //                modalMessage.style.top=0;
-        //    }
-        //});
-
 
 
     </script>

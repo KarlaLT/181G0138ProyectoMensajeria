@@ -15,12 +15,12 @@ self.addEventListener("fetch", function (event) {
 
 
 self.addEventListener("install", function () {
-    var db = indexedDB.open("mensajesDB", 1);  //no utiliza promises ni async, utiliza callbacks
+    var db = indexedDB.open("mensajesDB", 2);  //no utiliza promises ni async, utiliza callbacks
 
     db.onupgradeneeded = function () {
         //object store para guardar cambios en bd(post, put, delete)
         db.result.createObjectStore("peticiones", {
-            autoIncrement: true
+            autoIncrement: true, keyPath:"id"
         });
         //object store para requests que se hicieron cuando no se estaba online
         db.result.createObjectStore("cambios", {
@@ -39,7 +39,7 @@ async function verificar(event) { //CACHE FIRST
 
             if (exist) {
                 //revalidar
-                let clientid = event.clientid; //identificador de la pestaña del navegador (para saber qué pestaña se tiene que actualizar)
+                let clientid = event.clientId; //identificador de la pestaña del navegador (para saber qué pestaña se tiene que actualizar)
                 revalidar(exist.clone(), clientid); //guardada está STALE
 
                 return exist;
@@ -53,23 +53,35 @@ async function verificar(event) { //CACHE FIRST
                 return fetch(event.request);
             }
             else {
-                guardarRequest(event.request.clone()); //guardar request en indexedDB mientras se logra enviar
+                guardarRequest(event.request); //guardar request en indexedDB mientras se logra enviar
                 return new Response(null, { status: 200 });
             }
         }
     }
     else {
-        return cacheFirst(event.request);
+       // return cacheFirst(event.request);
+        // return fetch(event.request);
+        let exist = await caches.match(event.request);
+
+        if (exist) {
+            let clientid = event.clientId;
+            revalidar(exist.clone(), clientid);
+            return exist;
+        }
+        else {
+            return cacheFirst(event.request);
+        }
     }
 }
 
 
 async function revalidar(request, clientid) {
     let result = await fetch(request.url); //se hace de nuevo la petición a la dirección del request solicitdado
-    let clon = result.clone(); //clonarlo antes de leerlo, porque al leerlo se cierra el result
+   // let clon = result.clone(); //clonarlo antes de leerlo, porque al leerlo se cierra el result
 
     //verificar si hay diferencias en el json que se tenía guardado antes y el nuevo json
     if (result.ok) {
+        let clon = result.clone();
         let text = await result.text(); //viene de la api
         let staleText = await request.text(); //viene de la cache
 
@@ -77,6 +89,12 @@ async function revalidar(request, clientid) {
             let cache = await caches.open("cacheAPI"); //abrimos cache
             await cache.put(result.url, clon); //se guarda en cache la información que el request regresa
 
+            //Avisar del cambio
+            let ventana = await clients.get(clientid);
+            ventana.postMessage({
+                url: request.url,
+                data: JSON.parse(text)
+            });
         }
         //si son iguales no se hace nada, lo guardado en cache se queda igual a como estaba
     }
@@ -86,7 +104,7 @@ async function revalidar(request, clientid) {
 async function cacheFirst(request) {
     caches.match(request).then((cacheResponse) => {
         return cacheResponse || fetch(request).then((networkResponse) => {
-            return caches.open(currentCache).then((cache) => {
+            return caches.open("cacheAPI").then((cache) => {
                 cache.put(request, networkResponse.clone());
                 return networkResponse;
             })
@@ -136,7 +154,7 @@ async function reenviarRequestGuardadas() {
 
                 if (response.ok) {
                     var transaccion = db.transaction('peticiones', 'readwrite');
-                    transaccion.objectStore('peticiones').delete(peticion[i]);
+                    transaccion.objectStore('peticiones').delete(peticion[i].id);
                     i--;
                 }
             }

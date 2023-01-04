@@ -58,7 +58,7 @@
 
 
     <div class="modal" id="newMessage" >
-
+       
         <form method="post" data-action="Mensajes">
             <h4>Detalles del mensaje</h4>
 
@@ -82,7 +82,8 @@
                 </div>
             <label>Mensaje:</label>
 
-            <textarea name="Mensaje1"> </textarea>
+            <textarea required name="Mensaje1"> </textarea>
+            <p class="error" ></p>
 
             <div>
                 <input type="submit" value="Enviar" />
@@ -101,7 +102,7 @@
     </div>
 
 
-    <div class="modal" id="seeMessage">
+    <div class="modal modalVerMensaje" id="seeMessage">
 
         <form>
             <h4>Detalles del mensaje</h4>

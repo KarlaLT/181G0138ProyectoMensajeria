@@ -18,8 +18,13 @@ var divChckUsuarios = document.querySelector("#chckUsuarios");
 var radios = document.querySelectorAll('input[type=radio][name="usuarios"]');
 
 navigator.serviceWorker.addEventListener("message", function (event) {
-    if (event.data.includes(urlAPI + "mensajes/")) {
-        mostrarDatos(event.data.data);
+    if (event.data.url.includes(urlAPI + "mensajes/")) {
+        if (plantillaSent) {
+            mostrarDatos(event.data.data, "enviados");
+        }
+        else if (plantillaMensaje) {
+            mostrarDatos(event.data.data, "recibidos");
+        }
     }
 });
 
@@ -85,7 +90,7 @@ nameUsuario.innerText = "¡Bienvenido (a), " + localStorage.nameUsuario + "!";
 
 if (sectionMsj) {
     if (!usuarios) {
-         getUsuarios();
+        getUsuarios();
     }
     if (!grupos) {
         getGrupos();
@@ -106,8 +111,7 @@ if (sectionMsj) {
 
 if (radios) {
     radios.forEach(radio => radio.addEventListener('change', function () {
-        console.log(radio.value);
-
+   
         if (radio.value == "usuarios") {   
             while (divChckUsuarios.hasChildNodes()) {
                 divChckUsuarios.removeChild(divChckUsuarios.firstChild);
@@ -183,6 +187,7 @@ if (radios) {
     }));
 }
 
+
 document.addEventListener("click", async function (event){
     if (event.target.dataset.logout) {
         //cerrar sésión
@@ -214,7 +219,7 @@ document.addEventListener("click", async function (event){
                     form.children[1].children[1].innerText = usuarios.find(x => x.id == json.idEmisor).nombre;
                 }
                 else if (plantillaSent) {
-                    form.elements["IdRemitente"].value = usuarios.find(x => x.id == json.idRemitente).nombre;
+                    form.elements["IdRemitente"].value ="Para:"+ usuarios.find(x => x.id == json.idRemitente).nombre;
                     form.elements["IdRemitenteHidden"].value = json.idRemitente;
                     form.elements["IdMensaje"].value = json.id;
                 }
@@ -239,6 +244,8 @@ document.addEventListener("click", async function (event){
     if (event.target.dataset.cancel) {
         //Buscamos el elemento mas cercano que tenga el id .modal y lo escondemos.
         event.target.closest(".modal").style.top = '-100vh';
+        document.querySelector(".error").innerText = "";
+
     }
     //si el data es para ver un mensaje
     if (event.target.dataset.idvermensaje) {
@@ -337,7 +344,7 @@ async function mostrarDatos(mensajes, tipoMensajes) {
     else if (cantidad < sectionMsj.children.length) { //si son menos, se eliminan las plantillas que sobran
         let n = sectionMsj.children.length - cantidad
         for (var x = 0; x < n; x++) {
-            sec.lastChild.remove();
+            sectionMsj.lastChild.remove();
         }
     }
 
@@ -546,15 +553,21 @@ document.addEventListener("submit", async function (event) {
 
     var result = await fetch(request);
     if (result.ok) {
-         window.location.reload();
-      // getMensajesEnviados();
+        event.target.closest(".modal").style.display = "none";
+        if (plantillaSent) {
+            getMensajesEnviados();
+        }
+        else if (plantillaMensaje) {
+            getMensajesRecibidos();
+        }
+        document.querySelector(".error").innerText = "";
     }
     else {
         let error = await result.json();
-        console.log(error);
+        console.log(error.errors);
+        showError("Ha ocurrido un error al enviar la solicitud, verifique que los datos estén completos.");
     }
 });
-
 
 //llenar select de usuarios para seleccionar remitente
 async function getUsuarios() {
@@ -692,3 +705,11 @@ function filtrar(parametro) {
         getMensajesRecibidos();
     }
 } //funcional
+
+function showError(msj) {
+    if (Array.isArray(msj)) {
+        document.querySelector(".error").innerText=msj.join("<br />");
+    } else {
+        document.querySelector(".error").innerText = msj;
+    }
+}
