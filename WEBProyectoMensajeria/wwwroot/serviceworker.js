@@ -102,15 +102,29 @@ async function revalidar(request, clientid) {
 
 
 async function cacheFirst(request) {
-    caches.match(request).then((cacheResponse) => {
-        return cacheResponse || fetch(request).then((networkResponse) => {
-            return caches.open("cacheAPI").then((cache) => {
-                cache.put(request, networkResponse.clone());
-                return networkResponse;
-            })
-        })
-    })
-};
+    //caches.match(request).then((cacheResponse) => {
+    //    return cacheResponse || fetch(request).then((networkResponse) => {
+    //        return caches.open("cacheAPI").then((cache) => {
+    //            cache.put(request, networkResponse.clone());
+    //            return networkResponse;
+    //        })
+    //    })
+    //})
+
+    //entra aquí cuando el request no está guardado en caché, se hace fetch y después se guarda en cache
+    let response = await fetch(request);
+
+    if (response.ok) {
+        let clon = response.clone();
+        let cache = await caches.open("cacheAPI"); //abrimos cache
+
+        await cache.put(response.url, clon); //se guarda en cache la información que el request regresa
+        return response;
+    }
+    else {
+        console.log(response.json());
+    }
+}
 
 
 async function guardarRequest(request) {

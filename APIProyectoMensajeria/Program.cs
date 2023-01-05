@@ -13,7 +13,7 @@ builder.Services.AddCors(options =>
             {
                 options.AddPolicy(name: _MyCors, builder =>
                 {
-                    builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost").AllowAnyHeader().AllowAnyMethod();
+                    builder.WithOrigins("http://mensajeriatecnm.sistemas19.com", "https://mensajeriatecnm.sistemas19.com").AllowAnyHeader().AllowAnyMethod();
                 });
             });
 

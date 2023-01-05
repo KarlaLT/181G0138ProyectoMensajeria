@@ -78,6 +78,7 @@ if (btnLogin) {
         }
         else {
             console.log(result);
+            showError("Datos incorrectos");
         }
         
     }
@@ -442,7 +443,7 @@ document.addEventListener("submit", async function (event) {
 
         json = {
             idEmisor: localStorage.idUsuario,
-            mensaje1: form.children[3].value
+            mensaje1: form.elements["Mensaje1"].value
         };
 
         if (tipoRemitente == "usuarios") {           
