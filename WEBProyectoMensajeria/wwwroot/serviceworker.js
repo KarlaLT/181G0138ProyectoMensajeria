@@ -5,7 +5,7 @@ self.addEventListener("activate", function () {
         if (navigator.onLine) {
             reenviarRequestGuardadas();
         }
-    }, 3600);
+    }, 300000);
 });
 
 
